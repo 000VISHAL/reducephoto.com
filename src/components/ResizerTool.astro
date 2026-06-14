@@ -67,7 +67,7 @@ const { preselectedExamId = "" } = Astro.props;
         </div>
 
         <!-- Keep Original File Size checkbox -->
-        <div id="original-size-container" class="flex items-center gap-2 pt-1">
+        <div id="original-size-container" class="flex items-center gap-2 pt-1 hidden">
           <input type="checkbox" id="checkbox-original-size" class="w-4 h-4 accent-[var(--color-accent)] cursor-pointer" />
           <label for="checkbox-original-size" class="text-[13px] font-semibold text-[var(--color-text-primary)] cursor-pointer">
             Keep original file size & quality
@@ -102,7 +102,7 @@ const { preselectedExamId = "" } = Astro.props;
 
       <!-- Name & Date Strip Options (Visible/Toggleable in all modes) -->
       <div id="left-name-date-toggle-container" class="pt-3 border-t border-[var(--color-border-subtle)] space-y-3">
-        <div class="flex items-center gap-2">
+        <div id="checkbox-add-text-wrapper" class="flex items-center gap-2">
           <input type="checkbox" id="checkbox-add-text" class="w-4 h-4 accent-[var(--color-accent)] cursor-pointer" />
           <label for="checkbox-add-text" class="text-[13px] font-semibold text-[var(--color-text-primary)] cursor-pointer">
             Add Name & Date strip to photo
@@ -357,6 +357,7 @@ const { preselectedExamId = "" } = Astro.props;
 
   // State
   let selectedFile: { file: File; dataUrl: string; width: number; height: number; sizeKB: number } | null = null;
+  let cachedImgElement: HTMLImageElement | null = null;
   let activePreset: any = null;
   let activeDocType: 'photo' | 'signature' = 'photo';
   let processedDataUrl: string | null = null;
@@ -364,10 +365,25 @@ const { preselectedExamId = "" } = Astro.props;
   let shiftY = 0.5;
   let currentMode = 'presets';
 
+  // Debounce helper
+  function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    return function(...args: Parameters<T>) {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        func(...args);
+      }, wait);
+    };
+  }
+
   // DOM Elements
   const root = document.getElementById('resizer-tool-root');
   if (root) {
     const preselectedId = root.dataset.preselected;
+
+    const debouncedProcessImage = debounce((isTextOnlyUpdate = false) => {
+      processImage(isTextOnlyUpdate);
+    }, 250);
 
     // Check if '?tool=name-date' is present in the URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -434,6 +450,7 @@ const { preselectedExamId = "" } = Astro.props;
 
     // Text Overlay / Name and Date
     const checkboxAddText = root.querySelector('#checkbox-add-text') as HTMLInputElement;
+    const checkboxAddTextWrapper = root.querySelector('#checkbox-add-text-wrapper') as HTMLElement;
     const leftTextOverlayInputs = root.querySelector('#left-text-overlay-inputs') as HTMLElement;
     const textName = root.querySelector('#left-text-name') as HTMLInputElement;
     const textDate = root.querySelector('#left-text-date') as HTMLInputElement;
@@ -547,6 +564,11 @@ const { preselectedExamId = "" } = Astro.props;
     // Capture file selected event
     root.addEventListener('file-selected', (e: any) => {
       selectedFile = e.detail;
+      
+      // Cache the loaded image element to avoid reloading base64 data URLs continuously
+      cachedImgElement = new Image();
+      cachedImgElement.src = selectedFile.dataUrl;
+
       uploadStatus.textContent = "Image uploaded";
       uploadStatus.className = "text-[12px] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] px-2 py-0.5 rounded-[4px] text-[var(--color-accent)]";
       
@@ -574,6 +596,7 @@ const { preselectedExamId = "" } = Astro.props;
 
     root.addEventListener('file-removed', () => {
       selectedFile = null;
+      cachedImgElement = null;
       uploadStatus.textContent = "Waiting for file";
       uploadStatus.className = "text-[12px] bg-[var(--color-bg-elevated)] border border-[var(--color-border)] px-2 py-0.5 rounded-[4px] text-[var(--color-text-secondary)]";
       
@@ -601,7 +624,7 @@ const { preselectedExamId = "" } = Astro.props;
       valCropVert.textContent = `${Math.round(shiftY * 100)}%`;
       cropPreviewImg.style.top = `${-excessHeight * shiftY}px`;
       if (processedDataUrl) {
-        processImage(true);
+        debouncedProcessImage(true);
       }
     });
 
@@ -610,7 +633,7 @@ const { preselectedExamId = "" } = Astro.props;
       valCropHoriz.textContent = `${Math.round(shiftX * 100)}%`;
       cropPreviewImg.style.left = `${-excessWidth * shiftX}px`;
       if (processedDataUrl) {
-        processImage(true);
+        debouncedProcessImage(true);
       }
     });
 
@@ -656,10 +679,6 @@ const { preselectedExamId = "" } = Astro.props;
 
       cropPreviewImg.style.left = `${-excessWidth * shiftX}px`;
       cropPreviewImg.style.top = `${-excessHeight * shiftY}px`;
-
-      if (processedDataUrl) {
-        processImage(true);
-      }
     });
 
     window.addEventListener('mouseup', () => {
@@ -703,10 +722,6 @@ const { preselectedExamId = "" } = Astro.props;
 
       cropPreviewImg.style.left = `${-excessWidth * shiftX}px`;
       cropPreviewImg.style.top = `${-excessHeight * shiftY}px`;
-
-      if (processedDataUrl) {
-        processImage(true);
-      }
     }, { passive: true });
 
     cropPreviewContainer?.addEventListener('touchend', () => {
@@ -830,11 +845,11 @@ const { preselectedExamId = "" } = Astro.props;
     // Text inputs real-time rendering
     textName?.addEventListener('input', () => {
       textName.value = textName.value.toUpperCase();
-      processImage(true);
+      debouncedProcessImage(true);
     });
-    textDate?.addEventListener('input', () => processImage(true));
+    textDate?.addEventListener('input', () => debouncedProcessImage(true));
     textToggles?.forEach(radio => {
-      radio.addEventListener('change', () => processImage(true));
+      radio.addEventListener('change', () => debouncedProcessImage(true));
     });
 
     // Mode Switching Logic
@@ -875,6 +890,7 @@ const { preselectedExamId = "" } = Astro.props;
         if (checkboxOriginalSize) checkboxOriginalSize.checked = false;
         kbInputsGrid?.classList.remove('hidden');
         
+        if (checkboxAddTextWrapper) checkboxAddTextWrapper.classList.remove('hidden');
         if (checkboxAddText) {
           checkboxAddText.disabled = false;
           if (checkboxAddText.checked) {
@@ -892,13 +908,11 @@ const { preselectedExamId = "" } = Astro.props;
         if (leftNameDateToggleContainer) leftNameDateToggleContainer.classList.remove('hidden');
         if (currentPresetLabel) currentPresetLabel.textContent = "Custom size selected";
         
-        if (originalSizeContainer) originalSizeContainer.classList.remove('hidden');
-        if (checkboxOriginalSize && checkboxOriginalSize.checked) {
-          kbInputsGrid?.classList.add('hidden');
-        } else {
-          kbInputsGrid?.classList.remove('hidden');
-        }
+        if (originalSizeContainer) originalSizeContainer.classList.add('hidden');
+        if (checkboxOriginalSize) checkboxOriginalSize.checked = false;
+        kbInputsGrid?.classList.remove('hidden');
         
+        if (checkboxAddTextWrapper) checkboxAddTextWrapper.classList.remove('hidden');
         if (checkboxAddText) {
           checkboxAddText.disabled = false;
           if (checkboxAddText.checked) {
@@ -919,6 +933,7 @@ const { preselectedExamId = "" } = Astro.props;
         if (checkboxOriginalSize) checkboxOriginalSize.checked = true;
         kbInputsGrid?.classList.add('hidden');
         
+        if (checkboxAddTextWrapper) checkboxAddTextWrapper.classList.add('hidden');
         if (checkboxAddText) {
           checkboxAddText.checked = true;
           checkboxAddText.disabled = true;
@@ -1004,8 +1019,7 @@ const { preselectedExamId = "" } = Astro.props;
         btnProcess.classList.add('hidden');
       }
 
-      const img = new Image();
-      img.onload = () => {
+      const runDrawing = (img: HTMLImageElement) => {
         // Create canvas
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -1372,7 +1386,17 @@ const { preselectedExamId = "" } = Astro.props;
           }, 350);
         }
       };
-      img.src = selectedFile.dataUrl;
+
+      if (cachedImgElement && cachedImgElement.complete && cachedImgElement.naturalWidth > 0) {
+        runDrawing(cachedImgElement);
+      } else {
+        const img = new Image();
+        img.onload = () => {
+          cachedImgElement = img;
+          runDrawing(img);
+        };
+        img.src = selectedFile.dataUrl;
+      }
     }
 
     function renderComparisonSlider(origUrl: string, procUrl: string) {
