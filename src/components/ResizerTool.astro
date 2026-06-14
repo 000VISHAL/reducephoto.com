@@ -38,18 +38,18 @@ const { preselectedExamId = "" } = Astro.props;
       <div id="mode-presets-section" class="space-y-4">
         <!-- Preset dropdown selection -->
         <ExamSearch />
+      </div>
 
-        <!-- Doc Type Toggle (only visible if preset is selected) -->
-        <div id="doc-type-container" class="hidden space-y-2 pt-2 border-t border-[var(--color-border-subtle)]">
-          <span class="block text-[13px] font-medium text-[var(--color-text-secondary)]">Document Type</span>
-          <div class="grid grid-cols-2 gap-2 bg-[var(--color-bg-input)] p-1 rounded-[6px] border border-[var(--color-border)]">
-            <button type="button" id="btn-doc-photo" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all">
-              Photograph
-            </button>
-            <button type="button" id="btn-doc-sig" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all">
-              Signature
-            </button>
-          </div>
+      <!-- Doc Type Toggle (visible if preset is selected or in custom resize mode) -->
+      <div id="doc-type-container" class="hidden space-y-2 pt-2 border-t border-[var(--color-border-subtle)]">
+        <span class="block text-[13px] font-medium text-[var(--color-text-secondary)]">Document Type</span>
+        <div class="grid grid-cols-2 gap-2 bg-[var(--color-bg-input)] p-1 rounded-[6px] border border-[var(--color-border)]">
+          <button type="button" id="btn-doc-photo" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all">
+            Photograph
+          </button>
+          <button type="button" id="btn-doc-sig" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all">
+            Signature
+          </button>
         </div>
       </div>
 
@@ -527,9 +527,15 @@ const { preselectedExamId = "" } = Astro.props;
       if (type === 'photo') {
         btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
         btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+        if (currentMode === 'custom' && currentPresetLabel) {
+          currentPresetLabel.textContent = "Custom photo selected";
+        }
       } else {
         btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
         btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+        if (currentMode === 'custom' && currentPresetLabel) {
+          currentPresetLabel.textContent = "Custom signature selected";
+        }
       }
 
       // Reset the uploaded file so it goes back to upload (re-upload) mode for the new document type
@@ -915,6 +921,19 @@ const { preselectedExamId = "" } = Astro.props;
 
       if (mode === 'presets') {
         presetsSection?.classList.remove('hidden');
+        if (activePreset) {
+          docTypeContainer?.classList.remove('hidden');
+          // Update button classes to reflect current activeDocType
+          if (activeDocType === 'photo') {
+            btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
+            btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+          } else {
+            btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
+            btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+          }
+        } else {
+          docTypeContainer?.classList.add('hidden');
+        }
         dimensionsGrid?.classList.remove('hidden');
         dimensionsContainer?.classList.remove('hidden');
         
@@ -925,11 +944,22 @@ const { preselectedExamId = "" } = Astro.props;
         applyPresetValues();
         updateNameDateVisibility();
       } else if (mode === 'custom') {
-        activeDocType = 'photo'; // Reset to photo for custom mode so name/date option is available
         presetsSection?.classList.add('hidden');
+        docTypeContainer?.classList.remove('hidden');
+        
+        // Reflect activeDocType in custom mode
+        if (activeDocType === 'photo') {
+          btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
+          btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+          if (currentPresetLabel) currentPresetLabel.textContent = "Custom photo selected";
+        } else {
+          btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
+          btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+          if (currentPresetLabel) currentPresetLabel.textContent = "Custom signature selected";
+        }
+        
         dimensionsGrid?.classList.remove('hidden');
         dimensionsContainer?.classList.remove('hidden');
-        if (currentPresetLabel) currentPresetLabel.textContent = "Custom size selected";
         
         if (originalSizeContainer) originalSizeContainer.classList.add('hidden');
         if (checkboxOriginalSize) checkboxOriginalSize.checked = false;
@@ -941,6 +971,7 @@ const { preselectedExamId = "" } = Astro.props;
       } else if (mode === 'namedate') {
         activeDocType = 'photo';
         presetsSection?.classList.add('hidden');
+        docTypeContainer?.classList.add('hidden');
         dimensionsGrid?.classList.add('hidden');
         dimensionsContainer?.classList.remove('hidden');
         if (currentPresetLabel) currentPresetLabel.textContent = "Original size preserved";
@@ -1358,6 +1389,8 @@ const { preselectedExamId = "" } = Astro.props;
         let downloadName = 'reducephoto-resized.' + format;
         if (activePreset) {
           downloadName = `${activePreset.id}-${activeDocType}-${targetWidth}x${targetHeight}.${format}`;
+        } else if (currentMode === 'custom') {
+          downloadName = `custom-${activeDocType}-${targetWidth}x${targetHeight}.${format}`;
         }
         btnDownload.download = downloadName;
 
