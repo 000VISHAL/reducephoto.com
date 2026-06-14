@@ -491,6 +491,35 @@ const { preselectedExamId = "" } = Astro.props;
       valContrast.textContent = (e.target as HTMLInputElement).value;
     });
 
+    function updateNameDateVisibility() {
+      const leftNameDateToggleContainer = root.querySelector('#left-name-date-toggle-container') as HTMLElement;
+      if (!leftNameDateToggleContainer) return;
+
+      if (currentMode === 'namedate') {
+        return;
+      }
+
+      if (activeDocType === 'signature') {
+        leftNameDateToggleContainer.classList.add('hidden');
+        if (checkboxAddText) {
+          checkboxAddText.checked = false;
+        }
+        if (leftTextOverlayInputs) {
+          leftTextOverlayInputs.classList.add('hidden');
+        }
+      } else {
+        leftNameDateToggleContainer.classList.remove('hidden');
+        if (checkboxAddText) {
+          checkboxAddText.disabled = false;
+          if (checkboxAddText.checked) {
+            leftTextOverlayInputs?.classList.remove('hidden');
+          } else {
+            leftTextOverlayInputs?.classList.add('hidden');
+          }
+        }
+      }
+    }
+
     // Handle document type switching
     function setDocType(type: 'photo' | 'signature') {
       if (activeDocType === type) return;
@@ -510,6 +539,7 @@ const { preselectedExamId = "" } = Astro.props;
       }
 
       applyPresetValues();
+      updateNameDateVisibility();
     }
 
     btnDocPhoto?.addEventListener('click', () => setDocType('photo'));
@@ -551,13 +581,16 @@ const { preselectedExamId = "" } = Astro.props;
         presetLabel.textContent = "No preset selected";
       } else if (data.id === 'custom') {
         activePreset = null;
+        activeDocType = 'photo';
         docTypeContainer.classList.add('hidden');
         requirementsCard.classList.add('hidden');
         presetLabel.textContent = "Custom size selected";
+        updateNameDateVisibility();
       } else {
         activePreset = data;
         docTypeContainer.classList.remove('hidden');
         applyPresetValues();
+        updateNameDateVisibility();
       }
     });
 
@@ -884,46 +917,29 @@ const { preselectedExamId = "" } = Astro.props;
         presetsSection?.classList.remove('hidden');
         dimensionsGrid?.classList.remove('hidden');
         dimensionsContainer?.classList.remove('hidden');
-        if (leftNameDateToggleContainer) leftNameDateToggleContainer.classList.remove('hidden');
         
         if (originalSizeContainer) originalSizeContainer.classList.add('hidden');
         if (checkboxOriginalSize) checkboxOriginalSize.checked = false;
         kbInputsGrid?.classList.remove('hidden');
         
-        if (checkboxAddTextWrapper) checkboxAddTextWrapper.classList.remove('hidden');
-        if (checkboxAddText) {
-          checkboxAddText.disabled = false;
-          if (checkboxAddText.checked) {
-            leftTextOverlayInputs?.classList.remove('hidden');
-          } else {
-            leftTextOverlayInputs?.classList.add('hidden');
-          }
-        }
-        
         applyPresetValues();
+        updateNameDateVisibility();
       } else if (mode === 'custom') {
+        activeDocType = 'photo'; // Reset to photo for custom mode so name/date option is available
         presetsSection?.classList.add('hidden');
         dimensionsGrid?.classList.remove('hidden');
         dimensionsContainer?.classList.remove('hidden');
-        if (leftNameDateToggleContainer) leftNameDateToggleContainer.classList.remove('hidden');
         if (currentPresetLabel) currentPresetLabel.textContent = "Custom size selected";
         
         if (originalSizeContainer) originalSizeContainer.classList.add('hidden');
         if (checkboxOriginalSize) checkboxOriginalSize.checked = false;
         kbInputsGrid?.classList.remove('hidden');
         
-        if (checkboxAddTextWrapper) checkboxAddTextWrapper.classList.remove('hidden');
-        if (checkboxAddText) {
-          checkboxAddText.disabled = false;
-          if (checkboxAddText.checked) {
-            leftTextOverlayInputs?.classList.remove('hidden');
-          } else {
-            leftTextOverlayInputs?.classList.add('hidden');
-          }
-        }
+        updateNameDateVisibility();
         
         if (selectedFile) updateCropPreview();
       } else if (mode === 'namedate') {
+        activeDocType = 'photo';
         presetsSection?.classList.add('hidden');
         dimensionsGrid?.classList.add('hidden');
         dimensionsContainer?.classList.remove('hidden');
