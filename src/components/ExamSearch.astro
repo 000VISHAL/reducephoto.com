@@ -1,0 +1,216 @@
+---
+import { exams } from '../data/exams';
+---
+
+<div class="space-y-4" id="exam-search-container">
+  <!-- Search Input & Tabs Group -->
+  <div class="space-y-3">
+    <label for="exam-search-input" class="block text-[14px] font-semibold text-[var(--color-text-primary)]">
+      Select Exam Preset
+    </label>
+    <div class="relative">
+      <input
+        type="text"
+        id="exam-search-input"
+        placeholder="Search 100+ exams (e.g. UPSC, SSC, SBI)..."
+        class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:border-[var(--color-border-focus)] outline-none transition-colors"
+      />
+      <div class="absolute right-3.5 top-3 text-[var(--color-text-muted)] pointer-events-none">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="flex flex-wrap gap-1.5 border-b border-[var(--color-border-subtle)] pb-2 overflow-x-auto">
+    <button type="button" data-tab="all" class="category-tab active">
+      All
+    </button>
+    <button type="button" data-tab="central" class="category-tab">
+      Central
+    </button>
+    <button type="button" data-tab="state" class="category-tab">
+      State
+    </button>
+    <button type="button" data-tab="banking" class="category-tab">
+      Banking
+    </button>
+    <button type="button" data-tab="police" class="category-tab">
+      Police
+    </button>
+    <button type="button" data-tab="judiciary" class="category-tab">
+      Judiciary
+    </button>
+    <button type="button" data-tab="custom" class="category-tab">
+      Custom Size
+    </button>
+  </div>
+
+  <!-- Presets List (Scrollable) -->
+  <div id="presets-list" class="max-h-[260px] overflow-y-auto border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] divide-y divide-[var(--color-border-subtle)]">
+    <!-- Custom option always available at top -->
+    <div
+      data-id="custom"
+      data-name="Custom Dimensions"
+      data-category="custom"
+      class="preset-item flex items-center justify-between p-3.5 cursor-pointer hover:bg-[var(--color-bg-elevated)] transition-colors"
+    >
+      <div>
+        <div class="text-[14px] font-medium text-[var(--color-text-primary)]">Custom Dimensions</div>
+        <div class="text-[12px] text-[var(--color-text-secondary)]">Specify your own width, height, and KB limits.</div>
+      </div>
+      <span class="text-[12px] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] px-2 py-0.5 rounded-[4px] border border-[var(--color-border)]">
+        Custom
+      </span>
+    </div>
+
+    {exams.map((exam) => (
+      <div
+        data-id={exam.id}
+        data-name={exam.name}
+        data-category={exam.category}
+        data-photo-w={exam.photo.width}
+        data-photo-h={exam.photo.height}
+        data-photo-min={exam.photo.minKB}
+        data-photo-max={exam.photo.maxKB}
+        data-photo-fmt={exam.photo.format}
+        data-photo-notes={exam.photo.notes || ''}
+        data-sig-w={exam.signature.width}
+        data-sig-h={exam.signature.height}
+        data-sig-min={exam.signature.minKB}
+        data-sig-max={exam.signature.maxKB}
+        data-sig-fmt={exam.signature.format}
+        data-sig-notes={exam.signature.notes || ''}
+        class="preset-item flex items-center justify-between p-3.5 cursor-pointer hover:bg-[var(--color-bg-elevated)] transition-colors hidden-by-filter"
+      >
+        <div class="flex-grow pr-4">
+          <div class="text-[14px] font-medium text-[var(--color-text-primary)]">{exam.name}</div>
+          <div class="text-[12px] text-[var(--color-text-secondary)]">
+            Photo: {exam.photo.width}x{exam.photo.height}px ({exam.photo.minKB}-{exam.photo.maxKB}KB) | Sig: {exam.signature.width}x{exam.signature.height}px ({exam.signature.minKB}-{exam.signature.maxKB}KB)
+          </div>
+        </div>
+        <span class="text-[12px] capitalize bg-[var(--color-accent-subtle)] text-[var(--color-accent)] px-2 py-0.5 rounded-[4px] border border-[rgba(0,208,132,0.15)] flex-shrink-0">
+          {exam.category}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .category-tab {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .category-tab:hover {
+    color: var(--color-text-primary);
+  }
+  .category-tab.active {
+    color: var(--color-accent);
+    background: var(--color-accent-subtle);
+    border-color: rgba(0, 208, 132, 0.2);
+  }
+
+  /* Preset item lists filtering classes */
+  .hidden-by-filter {
+    display: none !important;
+  }
+</style>
+
+<script>
+  // Setup simple search and filter behavior
+  const container = document.getElementById('exam-search-container');
+  if (container) {
+    const searchInput = container.querySelector('#exam-search-input') as HTMLInputElement;
+    const tabs = container.querySelectorAll('.category-tab');
+    const items = container.querySelectorAll('.preset-item');
+
+    let currentCategory = 'all';
+    let searchQuery = '';
+
+    function filterPresets() {
+      items.forEach((itemNode) => {
+        const item = itemNode as HTMLElement;
+        const name = item.dataset.name?.toLowerCase() || '';
+        const cat = item.dataset.category || '';
+
+        const matchesSearch = name.includes(searchQuery);
+        const matchesCategory = currentCategory === 'all' || cat === currentCategory;
+
+        if (matchesSearch && matchesCategory) {
+          item.classList.remove('hidden-by-filter');
+        } else {
+          item.classList.add('hidden-by-filter');
+        }
+      });
+    }
+
+    // Default: Show all items except custom is always visible
+    items.forEach((itemNode) => {
+      const item = itemNode as HTMLElement;
+      item.classList.remove('hidden-by-filter');
+    });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = (e.target as HTMLInputElement).value.toLowerCase();
+        filterPresets();
+      });
+    }
+
+    tabs.forEach((tabNode) => {
+      tabNode.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tabNode.classList.add('active');
+        currentCategory = tabNode.getAttribute('data-tab') || 'all';
+        filterPresets();
+      });
+    });
+
+    // Handle preset selection
+    items.forEach((itemNode) => {
+      itemNode.addEventListener('click', () => {
+        const item = itemNode as HTMLElement;
+        const examId = item.dataset.id;
+        
+        // Dispatch select event
+        const event = new CustomEvent('exam-selected', {
+          detail: {
+            id: examId,
+            name: item.dataset.name,
+            category: item.dataset.category,
+            photo: {
+              width: parseInt(item.dataset.photoW || '0'),
+              height: parseInt(item.dataset.photoH || '0'),
+              minKB: parseInt(item.dataset.photoMin || '0'),
+              maxKB: parseInt(item.dataset.photoMax || '0'),
+              format: item.dataset.photoFmt || 'jpg',
+              notes: item.dataset.photoNotes
+            },
+            signature: {
+              width: parseInt(item.dataset.sigW || '0'),
+              height: parseInt(item.dataset.sigH || '0'),
+              minKB: parseInt(item.dataset.sigMin || '0'),
+              maxKB: parseInt(item.dataset.sigMax || '0'),
+              format: item.dataset.sigFmt || 'jpg',
+              notes: item.dataset.sigNotes
+            }
+          },
+          bubbles: true
+        });
+        container.dispatchEvent(event);
+      });
+    });
+  }
+</script>

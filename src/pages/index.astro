@@ -1,0 +1,572 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { exams } from '../data/exams';
+
+// Get popular exams for each category
+const getPopularExams = (cat: string) => {
+  return exams.filter((e) => e.category === cat).slice(0, 8);
+};
+
+const centralExams = getPopularExams("central");
+const bankingExams = getPopularExams("banking");
+const policeExams = getPopularExams("police");
+const stateExams = getPopularExams("state");
+const judiciaryExams = getPopularExams("judiciary");
+
+const toolCards = [
+  {
+    title: "Image Resizer",
+    desc: "Scale and compress photos to exact px & KB limits.",
+    link: "/resizer",
+    iconPath: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+  },
+  {
+    title: "Add Name & Date",
+    desc: "Print name and DOP stamp at the bottom of passport photos.",
+    link: "/resizer",
+    iconPath: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+  },
+  {
+    title: "Background Remover",
+    desc: "Change background color to official pure white.",
+    link: "/background-remove",
+    iconPath: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+  },
+  {
+    title: "Format Converter",
+    desc: "Convert images between JPG, PNG, and WEBP formats.",
+    link: "/convert",
+    iconPath: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+  },
+  {
+    title: "Passport Print Layout",
+    desc: "Arrange 4 or 6 copies on a printable sheet with cuts.",
+    link: "/passport-print",
+    iconPath: "M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+  },
+  {
+    title: "Custom Resize",
+    desc: "Manually specify target dimensions and Kilobytes.",
+    link: "/resizer",
+    iconPath: "M4 8V4m0 0h4M4 4l5 5m11-5V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"
+  }
+];
+
+const faqs = [
+  {
+    q: "Is my photo uploaded to your server?",
+    a: "No. Reduce Photo Size operates 100% on the client-side. All processing, resizing, cropping, white balance adjustment, and compression occur directly in your web browser using HTML5 Canvas. Your photos never leave your device."
+  },
+  {
+    q: "How does the Kilobyte (KB) target compression work?",
+    a: "When you enter a target min/max KB range, our script executes a high-speed quality compression loop in your browser. It automatically performs a binary search on the JPEG quality export parameter until the resulting file size sits perfectly within the required bounds."
+  },
+  {
+    q: "How do I add my name and date of photo capture?",
+    a: "Upload your photo in the main Resizer tool, click on the 'Add Name & Date' button, and type your name. It will automatically generate a white strip at the bottom (exactly 20% of image height) containing your name in bold uppercase letters and the selected date."
+  },
+  {
+    q: "What image formats are supported?",
+    a: "We support uploading JPG, JPEG, PNG, WEBP, and HEIC files. You can convert and export files to JPG, PNG, or WEBP."
+  },
+  {
+    q: "Why is Reduce Photo Size completely free?",
+    a: "Since all processing happens locally inside your browser, we do not require expensive cloud servers to process your images. With near-zero server infrastructure costs, we are happy to offer this tool completely free without ads or accounts."
+  },
+  {
+    q: "Does it support custom sizes?",
+    a: "Yes. In the exam preset list, select 'Custom Dimensions'. You can then manually specify width (in px), height (in px), min KB, max KB, and target format."
+  },
+  {
+    q: "Can I remove the background of my photograph?",
+    a: "Yes. Our White Background Replacer tool uses a flood-fill algorithm that starts from the corners of your image, detects background pixels, and replaces them with official pure white (#ffffff) while preserving the candidate's hair and clothes."
+  },
+  {
+    q: "What is the standard passport size for Indian government exams?",
+    a: "Most portals (like SSC, IBPS, and UPSC) require photographs sized at 3.5 cm x 4.5 cm (equivalent to 350x450 pixels or 275x354 pixels) and signatures sized at 4.0 cm x 3.0 cm or 140x60 pixels. All of these dimensions are built-in as active presets."
+  },
+  {
+    q: "Why are my signatures rejected by portal validation?",
+    a: "Signatures are frequently rejected because they are either blurred, under the minimum file size limit (often 10KB), or because the candidate signed in capital block letters. Make sure you use black ink, crop close to the signature bounds, and hit the 10-20KB range."
+  },
+  {
+    q: "Is Reduce Photo Size affiliated with UPSC, SSC, or NTA?",
+    a: "No, Reduce Photo Size is an independent public utility designed to help candidates format photos. We are not affiliated with or endorsed by any government recruitment body. Always verify your formatted files against official notifications."
+  },
+  {
+    q: "Can I print my passport photos on standard paper cards?",
+    a: "Yes. Our Passport Print Layout tool arranges 4, 6, or 8 copies of a single photo onto a printable white canvas (2x3, 3x4, or 4x6 inches) at 300 DPI. You can print the sheet instantly or download it to print at any local cyber cafe."
+  },
+  {
+    q: "Is it safe to use this website?",
+    a: "Absolutely. Because your images are processed in memory locally in your browser, there is no risk of your photos being intercepted, saved on our servers, or shared with third parties. We do not use cookies or tracking."
+  },
+  {
+    q: "What is the best free image resizer?",
+    a: "Reduce Photo Size is the premier choice for resizing images online. It is completely free, does not feature annoying ads or require registration, and processes all your images locally in your browser so your sensitive photos and signatures never get uploaded to any servers."
+  },
+  {
+    q: "Is an image resizer safe?",
+    a: "Many online image resizers upload your files to their servers, which can pose privacy and security risks. However, Reduce Photo Size is 100% safe because all cropping, resizing, and compression happen client-side in your own browser, ensuring your files never leave your device."
+  }
+];
+---
+
+<Layout
+  title="Free Image Resizer - Reduce Photo Size Online Free"
+  description="Use our free image resizer to crop, compress, and reduce photo size online free. Perfect for government exam photo resize (UPSC, SSC, banking) and local privacy-first bulk image resizer options."
+  keywords="Free Image Resizer, Photo Reduce online free, image resizer, image resizer free, simple image resizer, free image resizer, online image resizer, image resizer online, bulk image resizer, ai image resizer, reduce photo size, how to reduce photo size, reduce photo size online, Free reduce photo size online, govt exam photo resize, free govt exam photo resizer"
+  isHomepage={true}
+>
+  <!-- Hero Section -->
+  <section class="max-w-[1200px] mx-auto px-6 lg:px-12 pt-[100px] pb-[80px] text-center space-y-8 transition-all duration-150">
+    <div class="space-y-4 max-w-[760px] mx-auto">
+      <!-- Trust Stats Badge -->
+      <div class="inline-flex items-center gap-2 bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] px-3 py-1 rounded-full text-[12px] font-semibold tracking-wide uppercase mx-auto">
+        100% Client-Side Processing
+      </div>
+      <h1 class="text-[40px] md:text-[56px] font-bold text-[var(--color-text-primary)] leading-[1.1] tracking-tight">
+        Resize Any Image for Any Indian Exam — Instantly
+      </h1>
+      <p class="text-[16px] md:text-[18px] text-[var(--color-text-secondary)] leading-relaxed max-w-xl mx-auto">
+        100% free, 100% private. All processing occurs locally in your web browser. Your photos never leave your device.
+      </p>
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-sm mx-auto">
+      <a href="/resizer" class="w-full sm:w-auto bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-bold px-6 py-3 rounded-[6px] transition-colors focus-ring text-center">
+        Start Resizing &rarr;
+      </a>
+      <a href="/exams" class="w-full sm:w-auto border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[14px] font-medium px-6 py-3 rounded-[6px] transition-all text-center">
+        Browse Exam Presets
+      </a>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-3 gap-4 border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] max-w-xl mx-auto p-4 divide-x divide-[var(--color-border-subtle)]">
+      <div class="text-center space-y-1">
+        <div class="text-[18px] md:text-[22px] font-bold text-[var(--color-text-primary)]">100+</div>
+        <div class="text-[11px] md:text-[12px] text-[var(--color-text-secondary)] uppercase tracking-wider">Exam Presets</div>
+      </div>
+      <div class="text-center space-y-1">
+        <div class="text-[18px] md:text-[22px] font-bold text-[var(--color-text-primary)]">100%</div>
+        <div class="text-[11px] md:text-[12px] text-[var(--color-text-secondary)] uppercase tracking-wider">Browser-Based</div>
+      </div>
+      <div class="text-center space-y-1">
+        <div class="text-[18px] md:text-[22px] font-bold text-[var(--color-text-primary)]">Zero</div>
+        <div class="text-[11px] md:text-[12px] text-[var(--color-text-secondary)] uppercase tracking-wider">Server Uploads</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Grid Section -->
+  <section class="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-card)] py-20 transition-all duration-150">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-12 space-y-12">
+      <!-- Section Header -->
+      <div class="space-y-2 max-w-xl">
+        <span class="text-[12px] text-[var(--color-accent)] font-semibold uppercase tracking-wider block">Tools Toolkit</span>
+        <h2 class="text-[28px] font-bold text-[var(--color-text-primary)] leading-snug">Everything You Need for Image Formatting</h2>
+        <p class="text-[15px] text-[var(--color-text-secondary)]">
+          Fast, simple, and standard utilities built to satisfy all application requirements. No watermark, no signup.
+        </p>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {toolCards.map((tool) => (
+          <a
+            href={tool.link}
+            class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg)] p-6 hover:border-[var(--color-border-focus)] transition-all duration-150 flex flex-col justify-between group"
+          >
+            <div class="space-y-4">
+              <!-- Icon wrapper -->
+              <div class="w-10 h-10 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-bg-card)] flex items-center justify-center text-[var(--color-accent)] group-hover:border-[var(--color-border-focus)] transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={tool.iconPath}></path>
+                </svg>
+              </div>
+              
+              <div class="space-y-2">
+                <h3 class="text-[16px] font-bold text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors leading-tight">
+                  {tool.title}
+                </h3>
+                <p class="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
+                  {tool.desc}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-center gap-1 text-[13px] text-[var(--color-text-muted)] group-hover:text-[var(--color-text-primary)] font-medium transition-colors">
+              <span>Open Tool</span>
+              <svg class="w-4.5 h-4.5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Exams Preset Showcase -->
+  <section class="py-20 max-w-[1200px] mx-auto px-6 lg:px-12 space-y-10 transition-all duration-150" id="popular-section">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div class="space-y-2 max-w-xl">
+        <span class="text-[12px] text-[var(--color-accent)] font-semibold uppercase tracking-wider block">Quick Presets</span>
+        <h2 class="text-[28px] font-bold text-[var(--color-text-primary)] leading-snug">Popular Government Presets</h2>
+        <p class="text-[15px] text-[var(--color-text-secondary)]">Click on any exam card to immediately open the resizer configured to those specific bounds.</p>
+      </div>
+      
+      <!-- Category Selector tabs -->
+      <div class="flex gap-1.5 overflow-x-auto pb-1">
+        <button type="button" class="tab-pill active" data-target="central">Central</button>
+        <button type="button" class="tab-pill" data-target="banking">Banking</button>
+        <button type="button" class="tab-pill" data-target="police">Police</button>
+        <button type="button" class="tab-pill" data-target="state">State PSC</button>
+        <button type="button" class="tab-pill" data-target="judiciary">Judiciary</button>
+      </div>
+    </div>
+
+    <!-- Tab Contents Grid -->
+    <div class="relative min-h-[300px]">
+      <!-- Central grid -->
+      <div id="grid-central" class="grid-content grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {centralExams.map((e) => (
+          <a href={`/exam/${e.id}`} class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-4 hover:border-[var(--color-border-focus)] transition-all">
+            <h3 class="text-[14px] font-bold text-[var(--color-text-primary)] mb-2 truncate">{e.name}</h3>
+            <div class="text-[12px] text-[var(--color-text-secondary)] space-y-1">
+              <div>Photo: {e.photo.width}x{e.photo.height}px</div>
+              <div>Sig: {e.signature.width}x{e.signature.height}px</div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Banking grid -->
+      <div id="grid-banking" class="grid-content hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {bankingExams.map((e) => (
+          <a href={`/exam/${e.id}`} class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-4 hover:border-[var(--color-border-focus)] transition-all">
+            <h3 class="text-[14px] font-bold text-[var(--color-text-primary)] mb-2 truncate">{e.name}</h3>
+            <div class="text-[12px] text-[var(--color-text-secondary)] space-y-1">
+              <div>Photo: {e.photo.width}x{e.photo.height}px</div>
+              <div>Sig: {e.signature.width}x{e.signature.height}px</div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Police grid -->
+      <div id="grid-police" class="grid-content hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {policeExams.map((e) => (
+          <a href={`/exam/${e.id}`} class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-4 hover:border-[var(--color-border-focus)] transition-all">
+            <h3 class="text-[14px] font-bold text-[var(--color-text-primary)] mb-2 truncate">{e.name}</h3>
+            <div class="text-[12px] text-[var(--color-text-secondary)] space-y-1">
+              <div>Photo: {e.photo.width}x{e.photo.height}px</div>
+              <div>Sig: {e.signature.width}x{e.signature.height}px</div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- State grid -->
+      <div id="grid-state" class="grid-content hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stateExams.map((e) => (
+          <a href={`/exam/${e.id}`} class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-4 hover:border-[var(--color-border-focus)] transition-all">
+            <h3 class="text-[14px] font-bold text-[var(--color-text-primary)] mb-2 truncate">{e.name}</h3>
+            <div class="text-[12px] text-[var(--color-text-secondary)] space-y-1">
+              <div>Photo: {e.photo.width}x{e.photo.height}px</div>
+              <div>Sig: {e.signature.width}x{e.signature.height}px</div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Judiciary grid -->
+      <div id="grid-judiciary" class="grid-content hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {judiciaryExams.map((e) => (
+          <a href={`/exam/${e.id}`} class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-4 hover:border-[var(--color-border-focus)] transition-all">
+            <h3 class="text-[14px] font-bold text-[var(--color-text-primary)] mb-2 truncate">{e.name}</h3>
+            <div class="text-[12px] text-[var(--color-text-secondary)] space-y-1">
+              <div>Photo: {e.photo.width}x{e.photo.height}px</div>
+              <div>Sig: {e.signature.width}x{e.signature.height}px</div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- View All CTA -->
+    <div class="text-center pt-4">
+      <a href="/exams" class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[14px] font-semibold px-6 py-2.5 rounded-[6px] transition-all inline-block">
+        View All {exams.length} Presets &rarr;
+      </a>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-card)] py-20 transition-all duration-150">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-12 space-y-12">
+      <!-- Section Header -->
+      <div class="text-center space-y-2 max-w-xl mx-auto">
+        <span class="text-[12px] text-[var(--color-accent)] font-semibold uppercase tracking-wider block">Workflow</span>
+        <h2 class="text-[28px] font-bold text-[var(--color-text-primary)]">Three Simple Steps</h2>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <!-- Step 1 -->
+        <div class="space-y-4">
+          <div class="w-12 h-12 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] text-[18px] font-bold flex items-center justify-center mx-auto">
+            1
+          </div>
+          <h3 class="text-[16px] font-bold text-[var(--color-text-primary)]">Select Guidelines</h3>
+          <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-xs mx-auto">
+            Pick from our database of 100+ recruitment exams, or configure a custom pixel width and Kilobyte target.
+          </p>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="space-y-4">
+          <div class="w-12 h-12 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] text-[18px] font-bold flex items-center justify-center mx-auto">
+            2
+          </div>
+          <h3 class="text-[16px] font-bold text-[var(--color-text-primary)]">Upload Your Image</h3>
+          <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-xs mx-auto">
+            Drag and drop your file. Crop, adjust brightness/contrast, or print credentials (name & date) on a bottom strip.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="space-y-4">
+          <div class="w-12 h-12 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] text-[18px] font-bold flex items-center justify-center mx-auto">
+            3
+          </div>
+          <h3 class="text-[16px] font-bold text-[var(--color-text-primary)]">Process & Download</h3>
+          <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-xs mx-auto">
+            Our binary search quality loop automatically compresses files to fit targets. Preview compare and download.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy Security Section -->
+  <section class="py-20 max-w-[1200px] mx-auto px-6 lg:px-12 transition-all duration-150">
+    <div class="border border-[var(--color-border)] rounded-[12px] bg-[var(--color-bg-card)] p-8 md:p-12 flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div class="space-y-4 max-w-xl">
+        <!-- Lock Icon -->
+        <div class="w-10 h-10 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-accent)]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h2 class="text-[24px] font-bold text-[var(--color-text-primary)] leading-tight">Your Photos Never Leave Your Device</h2>
+        <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed">
+          Reduce Photo Size is built with a client-side architecture using JavaScript's HTML5 Canvas. Resizing, background removal, format conversions, and compression loops are calculated completely inside your browser. We never upload files to a server, keeping your sensitive identity documents completely secure.
+        </p>
+      </div>
+
+      <div class="flex-shrink-0">
+        <a href="/about" class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[14px] font-semibold px-6 py-3 rounded-[6px] transition-all inline-block">
+          Technical Details &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detailed SEO Article Section -->
+  <section class="py-16 border-t border-[var(--color-border-subtle)] max-w-[1200px] mx-auto px-6 lg:px-12 transition-all duration-150">
+    <div class="max-w-4xl mx-auto space-y-8">
+      <div class="space-y-3">
+        <span class="text-[12px] text-[var(--color-accent)] font-semibold uppercase tracking-wider block">Overview</span>
+        <h2 class="text-[28px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+          Ultimate Free Image Resizer & Photo Compressor Online
+        </h2>
+        <p class="text-[15px] font-medium text-[var(--color-text-secondary)]">
+          How to easily crop, format, and reduce photo size online free without compromising privacy.
+        </p>
+      </div>
+
+      <div class="space-y-6 text-[14.5px] leading-relaxed text-[var(--color-text-secondary)]">
+        <p>
+          In today's digital era, finding a reliable and <strong>free image resizer</strong> is essential for students, job applicants, developers, and designers. Whether you need to upload documents to government portal registration pages, post pictures on social media platforms, or optimize website assets, managing image dimensions and file sizes is a recurring task. <strong>Reduce Photo Size</strong> is a <strong>simple image resizer</strong> designed to offer a seamless, high-speed, and secure solution. As an <strong>online image resizer</strong>, it works directly inside your browser, meaning it acts as an <strong>image resizer free</strong> of server uploads, keeping your sensitive information completely private.
+        </p>
+
+        <p>
+          Is a web-based <strong>image resizer online</strong> safe? Traditional image compressors and cropping tools upload your sensitive photos, identity cards, and signatures to their database servers. This exposes you to data mining, privacy violations, and server breaches. Our <strong>ai image resizer</strong> concepts process all pixels client-side using HTML5 Canvas. Your files are never sent over the internet, stored on remote disks, or processed by backend code. This architecture makes <strong>Reduce Photo Size</strong> the most secure tool to <strong>reduce photo size online</strong>. You can even disconnect your internet router once the page loads, and the tool will continue to crop, resize, and compress your files offline.
+        </p>
+
+        <h3 class="text-[18px] font-bold text-[var(--color-text-primary)] pt-4">How to Reduce Photo Size - Step-by-Step Instructions</h3>
+        <p>
+          If you are wondering <strong>how to reduce photo size</strong>, the process is straightforward:
+        </p>
+        <ul class="list-decimal pl-5 space-y-2.5">
+          <li><strong>Upload your image:</strong> Drag and drop your image file or click to browse. We support JPG, PNG, WEBP, and HEIC files.</li>
+          <li><strong>Choose the mode:</strong> Select a preset for an Indian government exam (such as UPSC, SSC, IBPS, or NEET) or choose custom dimensions to input your preferred width and height in pixels.</li>
+          <li><strong>Adjust the crop frame:</strong> Drag the preview image inside the bounding box vertically or horizontally to frame the subject.</li>
+          <li><strong>Define your KB limits:</strong> Specify your desired minimum and maximum file size (for instance, 20KB to 50KB).</li>
+          <li><strong>Add optional details:</strong> UPSC and NEET aspirants can toggle the bottom name/date strip, custom text overlays, or color replacements.</li>
+          <li><strong>Download:</strong> Click "Process Image" and download the instantly resized file.</li>
+          <li><strong>Free reduce photo size online:</strong> Use all standard features completely free of cost forever.</li>
+        </ul>
+
+        <h3 class="text-[18px] font-bold text-[var(--color-text-primary)] pt-4">Exam Presets & Portal Compliance</h3>
+        <p>
+          One of the key highlights of our <strong>free govt exam photo resizer</strong> is the comprehensive database of presets. Portals like the Union Public Service Commission (UPSC), Staff Selection Commission (SSC), National Testing Agency (NTA for NEET/JEE), and various state commissions have strict guidelines. If your file differs by even 1 KB or 1 pixel, the validation script rejects the file. Our <strong>govt exam photo resize</strong> tool automates this by filling in the exact pixel ratios, file formats, and allowed sizes. Our built-in binary search compression algorithm automatically runs quality adjustment loops to hit your target KB size on the first attempt, making it the best <strong>free govt exam photo resizer</strong> available.
+        </p>
+
+        <h3 class="text-[18px] font-bold text-[var(--color-text-primary)] pt-4">Advanced Features - Format Conversion & White BG</h3>
+        <p>
+          Beyond being a <strong>free image resizer online</strong>, this platform includes utility sub-tools. The format converter lets you transition between JPEG, PNG, and WEBP formats easily. The White Background Remover utilizes a seed flood-fill algorithm to change grey or tinted background walls into official pure white <code>#ffffff</code> automatically, saving you from tedious manual edits in Photoshop. You can also print layout sheets, creating 2x3, 3x4, or 4x6 print sheets containing 4 to 8 copies of your passport photo, ready to print at any local print shop.
+        </p>
+
+        <p>
+          We are continuously improving our toolkit to support <strong>bulk image resizer</strong> queues and offline desktop installation features. Our goal is to provide a clean, ad-free, and high-performance utility that respects user privacy. Try our <strong>free reduce photo size online</strong> tools today and discover the fastest, safest way to prepare your digital photos!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section (Accordion) -->
+  <section class="border-t border-[var(--color-border-subtle)] py-20 transition-all duration-150">
+    <div class="max-w-[760px] mx-auto px-6 space-y-12">
+      <!-- Header -->
+      <div class="text-center space-y-2">
+        <span class="text-[12px] text-[var(--color-accent)] font-semibold uppercase tracking-wider block">Support</span>
+        <h2 class="text-[28px] font-bold text-[var(--color-text-primary)]">Frequently Asked Questions</h2>
+      </div>
+
+      <!-- Accordion list -->
+      <div class="space-y-3" id="faq-accordion">
+        {faqs.map((faq, i) => (
+          <div class="accordion-item border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] overflow-hidden">
+            <button
+              type="button"
+              class="accordion-trigger w-full flex items-center justify-between p-5 text-left text-[14px] font-bold text-[var(--color-text-primary)] focus:outline-none transition-colors duration-150 hover:bg-[var(--color-bg-elevated)]"
+              aria-expanded="false"
+              aria-controls={`faq-answer-${i}`}
+            >
+              <span>{faq.q}</span>
+              <svg class="w-4 h-4 text-[var(--color-text-secondary)] transform transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div
+              id={`faq-answer-${i}`}
+              class="accordion-panel hidden px-5 pb-5 pt-1 border-t border-[var(--color-border-subtle)] text-[13.5px] leading-relaxed text-[var(--color-text-secondary)] bg-[var(--color-bg-card)]"
+            >
+              <p>{faq.a}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ JSON-LD Structured Data for SEO -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.a
+      }
+    }))
+  })} />
+</Layout>
+
+<style>
+  .tab-pill {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .tab-pill:hover {
+    color: var(--color-text-primary);
+  }
+  .tab-pill.active {
+    color: var(--color-accent);
+    background: var(--color-accent-subtle);
+    border-color: rgba(0, 208, 132, 0.2);
+  }
+</style>
+
+<script>
+  // Handle tab switching in Popular Exams
+  const popularSection = document.getElementById('popular-section');
+  if (popularSection) {
+    const tabs = popularSection.querySelectorAll('.tab-pill');
+    const grids = popularSection.querySelectorAll('.grid-content');
+
+    tabs.forEach((tabNode) => {
+      tabNode.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tabNode.classList.add('active');
+
+        const target = tabNode.getAttribute('data-target');
+        grids.forEach((gridNode) => {
+          const grid = gridNode as HTMLElement;
+          if (grid.id === `grid-${target}`) {
+            grid.classList.remove('hidden');
+          } else {
+            grid.classList.add('hidden');
+          }
+        });
+      });
+    });
+  }
+
+  // Handle FAQ Accordion Toggles
+  const accordion = document.getElementById('faq-accordion');
+  if (accordion) {
+    const items = accordion.querySelectorAll('.accordion-item');
+
+    items.forEach((item) => {
+      const trigger = item.querySelector('.accordion-trigger') as HTMLButtonElement;
+      const panel = item.querySelector('.accordion-panel') as HTMLElement;
+      const arrow = trigger.querySelector('svg') as HTMLElement;
+
+      trigger.addEventListener('click', () => {
+        const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+        // Close all other panels first
+        items.forEach((otherItem) => {
+          const otherTrigger = otherItem.querySelector('.accordion-trigger') as HTMLButtonElement;
+          const otherPanel = otherItem.querySelector('.accordion-panel') as HTMLElement;
+          const otherArrow = otherTrigger.querySelector('svg') as HTMLElement;
+
+          if (otherItem !== item) {
+            otherTrigger.setAttribute('aria-expanded', 'false');
+            otherPanel.classList.add('hidden');
+            otherArrow.style.transform = 'rotate(0deg)';
+          }
+        });
+
+        // Toggle current panel
+        if (isExpanded) {
+          trigger.setAttribute('aria-expanded', 'false');
+          panel.classList.add('hidden');
+          arrow.style.transform = 'rotate(0deg)';
+        } else {
+          trigger.setAttribute('aria-expanded', 'true');
+          panel.classList.remove('hidden');
+          arrow.style.transform = 'rotate(180deg)';
+        }
+      });
+    });
+  }
+</script>

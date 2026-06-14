@@ -1,0 +1,289 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ImageDropzone from '../components/ImageDropzone.astro';
+---
+
+<Layout
+  title="Passport Photo Print Layout Generator | Reduce Photo Size"
+  description="Generate printable passport layouts (4x6, 3x4, 2x3 inches) with 4 or 6 copies. Download high-res 300 DPI sheet or print instantly."
+>
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-12 py-12 lg:py-16 space-y-8 transition-all duration-150" id="passport-print-container">
+    <!-- Breadcrumb -->
+    <nav class="text-[13px] text-[var(--color-text-muted)] flex items-center gap-2">
+      <a href="/" class="hover:text-[var(--color-text-secondary)] transition-colors">Home</a>
+      <span>/</span>
+      <span class="text-[var(--color-text-secondary)] font-medium">Passport Layout</span>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="border-b border-[var(--color-border-subtle)] pb-6 space-y-2.5 max-w-xl">
+      <h1 class="text-[32px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        Passport Photo Print Layout
+      </h1>
+      <p class="text-[15px] text-[var(--color-text-secondary)]">
+        Upload a passport-sized photo, select your print card sheet size, and automatically arrange 4, 6, or 8 copies on a printable sheet with cutting guidelines.
+      </p>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Left Controls (4 cols) -->
+      <div class="lg:col-span-4 space-y-6">
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-4">
+          <h2 class="text-[16px] font-bold text-[var(--color-text-primary)]">Layout Settings</h2>
+
+          <!-- Paper Size Selection -->
+          <div class="space-y-2">
+            <label for="select-paper-size" class="block text-[13px] font-medium text-[var(--color-text-secondary)]">Select Paper Sheet Size</label>
+            <select id="select-paper-size" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none">
+              <option value="4-6">4" x 6" Photo Paper (8 Copies)</option>
+              <option value="3-4">3" x 4" Paper Card (6 Copies)</option>
+              <option value="2-3">2" x 3" Wallet Card (4 Copies)</option>
+            </select>
+          </div>
+
+          <!-- Grid Guidelines checkbox -->
+          <div class="flex items-center justify-between pt-2">
+            <div>
+              <label for="check-border-lines" class="block text-[13px] font-semibold text-[var(--color-text-primary)]">Include Cutting Guides</label>
+              <span class="block text-[11px] text-[var(--color-text-secondary)]">Draws thin grey lines around each photo</span>
+            </div>
+            <input type="checkbox" id="check-border-lines" checked class="w-4 h-4 accent-[var(--color-accent)] cursor-pointer" />
+          </div>
+
+          <!-- Actions -->
+          <div class="pt-4 border-t border-[var(--color-border-subtle)] space-y-2">
+            <button
+              type="button"
+              id="btn-layout-generate"
+              class="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold py-2.5 rounded-[6px] transition-colors focus-ring hidden"
+            >
+              Generate Layout
+            </button>
+            <button
+              type="button"
+              id="btn-layout-print"
+              class="w-full bg-[var(--color-text-primary)] hover:opacity-90 text-[var(--color-text-inverse)] text-[14px] font-semibold py-2.5 rounded-[6px] transition-colors focus-ring hidden"
+            >
+              Print Sheet
+            </button>
+            <a
+              href="#"
+              id="btn-layout-download"
+              download="reducephoto-print-sheet.jpg"
+              class="w-full border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[14px] font-medium py-2.5 rounded-[6px] transition-colors text-center block hidden"
+            >
+              Download High-Res JPG
+            </a>
+            <button
+              type="button"
+              id="btn-layout-reset"
+              class="w-full border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[13px] font-medium py-2 rounded-[6px] transition-colors hidden"
+            >
+              Reset Tool
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Output Panel (8 cols) -->
+      <div class="lg:col-span-8 space-y-6">
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-6 space-y-6">
+          <ImageDropzone id="passport-upload" maxSizeMB={15} />
+
+          <!-- Printable Sheet Preview -->
+          <div id="print-sheet-container" class="hidden space-y-6 text-center">
+            <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Print Layout Preview</h3>
+            <p class="text-[12px] text-[var(--color-text-secondary)]">This sheet is generated at 300 DPI equivalent. Download or print to standard photo paper.</p>
+            
+            <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg)] p-6 max-w-sm mx-auto flex items-center justify-center">
+              <img id="print-sheet-img" class="max-h-[380px] w-auto shadow-lg border border-neutral-800 bg-white" alt="Print Layout Sheet" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  let uploadedFile: { dataUrl: string; width: number; height: number } | null = null;
+  let printSheetDataUrl: string | null = null;
+
+  const container = document.getElementById('passport-print-container');
+  if (container) {
+    const btnGenerate = container.querySelector('#btn-layout-generate') as HTMLButtonElement;
+    const btnPrint = container.querySelector('#btn-layout-print') as HTMLButtonElement;
+    const btnDownload = container.querySelector('#btn-layout-download') as HTMLAnchorElement;
+    const btnReset = container.querySelector('#btn-layout-reset') as HTMLButtonElement;
+
+    const paperSizeSelect = container.querySelector('#select-paper-size') as HTMLSelectElement;
+    const guideLinesCheckbox = container.querySelector('#check-border-lines') as HTMLInputElement;
+
+    const previewContainer = container.querySelector('#print-sheet-container') as HTMLElement;
+    const previewImg = container.querySelector('#print-sheet-img') as HTMLImageElement;
+
+    // Monitor input changes to hide final results and force regeneration
+    [paperSizeSelect, guideLinesCheckbox].forEach(el => {
+      el.addEventListener('change', () => {
+        if (uploadedFile) {
+          btnGenerate.classList.remove('hidden');
+          btnPrint.classList.add('hidden');
+          btnDownload.classList.add('hidden');
+        }
+      });
+    });
+
+    // File Selected
+    container.addEventListener('file-selected', (e: any) => {
+      uploadedFile = e.detail;
+      btnGenerate.classList.remove('hidden');
+    });
+
+    container.addEventListener('file-removed', () => {
+      uploadedFile = null;
+      previewContainer.classList.add('hidden');
+      btnGenerate.classList.add('hidden');
+      btnPrint.classList.add('hidden');
+      btnDownload.classList.add('hidden');
+      btnReset.classList.add('hidden');
+    });
+
+    // Generate Layout click
+    btnGenerate.addEventListener('click', () => {
+      if (!uploadedFile) return;
+
+      const paperSize = paperSizeSelect.value; // '4-6', '3-4', '2-3'
+      const showGuides = guideLinesCheckbox.checked;
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Settings based on paper sizes (at 300 DPI)
+        let canvasW = 1800; // Landscape 6x4"
+        let canvasH = 1200;
+        let cols = 4;
+        let rows = 2;
+        
+        let photoW = 414; // standard 3.5x4.5cm photo at 300 DPI
+        let photoH = 531;
+
+        if (paperSize === '3-4') {
+          canvasW = 1200; // Landscape 4x3"
+          canvasH = 900;
+          cols = 3;
+          rows = 2;
+          photoW = 340;
+          photoH = 430;
+        } else if (paperSize === '2-3') {
+          canvasW = 900; // Landscape 3x2"
+          canvasH = 600;
+          cols = 2;
+          rows = 2;
+          photoW = 280;
+          photoH = 360;
+        }
+
+        canvas.width = canvasW;
+        canvas.height = canvasH;
+
+        // Fill background white
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvasW, canvasH);
+
+        // Calculate spacings to center the grid
+        const gridW = cols * photoW;
+        const gridH = rows * photoH;
+        
+        const startX = (canvasW - gridW) / (cols + 1);
+        const startY = (canvasH - gridH) / (rows + 1);
+
+        // Draw photos in grid
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            // Coordinate
+            const px = startX + c * (photoW + startX / (cols - 1 || 1));
+            // simplified: c * photoW + margin
+            // let's distribute evenly
+            const x = startX + c * photoW + c * ((canvasW - gridW - (startX * 2)) / (cols - 1 || 1));
+            const y = startY + r * photoH + r * ((canvasH - gridH - (startY * 2)) / (rows - 1 || 1));
+
+            // Draw image scaled
+            ctx.drawImage(img, x, y, photoW, photoH);
+
+            // Draw guide lines
+            if (showGuides) {
+              ctx.strokeStyle = '#cccccc';
+              ctx.lineWidth = 2;
+              ctx.strokeRect(x, y, photoW, photoH);
+            }
+          }
+        }
+
+        // Export data
+        const outUrl = canvas.toDataURL('image/jpeg', 0.95);
+        printSheetDataUrl = outUrl;
+        previewImg.src = outUrl;
+
+        // UI buttons toggle
+        previewContainer.classList.remove('hidden');
+        btnGenerate.classList.add('hidden');
+        btnPrint.classList.remove('hidden');
+        btnDownload.classList.remove('hidden');
+        btnReset.classList.remove('hidden');
+
+        btnDownload.href = outUrl;
+        btnDownload.download = `reducephoto-passport-layout-${paperSize}.jpg`;
+      };
+      img.src = uploadedFile.dataUrl;
+    });
+
+    // Print Button
+    btnPrint.addEventListener('click', () => {
+      if (!printSheetDataUrl) return;
+
+      // Open a print window with ONLY the image to prevent styling leakage
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.write(`
+          <html>
+            <head>
+              <title>Print Reduce Photo Size Sheet</title>
+              <style>
+                body {
+                  margin: 0;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  height: 100vh;
+                  background-color: white;
+                }
+                img {
+                  max-width: 100%;
+                  max-height: 100%;
+                  object-fit: contain;
+                }
+                @page {
+                  size: landscape;
+                  margin: 0;
+                }
+              </style>
+            </head>
+            <body onload="window.print();window.close();">
+              <img src="${printSheetDataUrl}" />
+            </body>
+          </html>
+        `);
+        printWin.document.close();
+      }
+    });
+
+    btnReset.addEventListener('click', () => {
+      const removeBtnInside = container.querySelector('#passport-upload-remove-btn') as HTMLButtonElement;
+      if (removeBtnInside) removeBtnInside.click();
+    });
+  }
+</script>

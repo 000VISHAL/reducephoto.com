@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="404 - Page Not Found | Reduce Photo Size"
+  description="The page you are looking for could not be found on Reduce Photo Size. Go back to our free privacy-first image resizer."
+>
+  <div class="max-w-[1200px] mx-auto px-6 py-20 lg:py-32 flex flex-col items-center justify-center text-center space-y-8 min-h-[70vh]">
+    
+    <!-- Neon Circle Badge with 404 -->
+    <div class="relative w-32 h-32 flex items-center justify-center">
+      <div class="absolute inset-0 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] animate-pulse"></div>
+      <span class="text-[40px] font-black text-[var(--color-accent)] tracking-tight">404</span>
+    </div>
+
+    <!-- Message -->
+    <div class="space-y-3 max-w-md">
+      <h1 class="text-[28px] font-extrabold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        Page Not Found
+      </h1>
+      <p class="text-[14.5px] text-[var(--color-text-secondary)] leading-relaxed">
+        The page you are looking for might have been moved, deleted, or doesn't exist. All image processing features are safe and available on our home page.
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row items-center gap-4 pt-4">
+      <a href="/" class="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold px-6 py-2.5 rounded-[6px] transition-colors focus-ring">
+        Go to Home
+      </a>
+      <a href="/resizer" class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[14px] font-medium px-6 py-2.5 rounded-[6px] transition-all">
+        Open Image Resizer
+      </a>
+    </div>
+  </div>
+</Layout>

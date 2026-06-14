@@ -1,0 +1,105 @@
+---
+interface Props {
+  originalSrc: string;
+  processedSrc: string;
+  originalLabel?: string;
+  processedLabel?: string;
+}
+
+const {
+  originalSrc,
+  processedSrc,
+  originalLabel = "Original",
+  processedLabel = "Processed"
+} = Astro.props;
+---
+
+<div class="before-after-slider relative overflow-hidden border border-[var(--color-border)] rounded-[8px] aspect-[4/3] w-full max-w-lg mx-auto bg-black select-none">
+  <!-- Original Image (Background) -->
+  <img src={originalSrc} class="absolute inset-0 w-full h-full object-contain pointer-events-none" alt="Original Image" />
+  <span class="absolute top-3 left-3 text-[11px] font-semibold uppercase tracking-wider bg-black/60 border border-[var(--color-border)] text-[var(--color-text-secondary)] px-2 py-0.5 rounded-[4px]">
+    {originalLabel}
+  </span>
+
+  <!-- Processed Image (Foreground, Clipped) -->
+  <div class="processed-container absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style="width: 50%;">
+    <img src={processedSrc} class="absolute inset-0 w-full h-full object-contain pointer-events-none max-w-none" style="width: 100%; height: 100%;" alt="Processed Image" />
+    <span class="absolute top-3 right-3 text-[11px] font-semibold uppercase tracking-wider bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] px-2 py-0.5 rounded-[4px] pointer-events-auto">
+      {processedLabel}
+    </span>
+  </div>
+
+  <!-- Divider & Handle -->
+  <div class="slider-divider absolute top-0 bottom-0 left-[50%] w-[2px] bg-white pointer-events-none">
+    <!-- Handle -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center pointer-events-none border border-[var(--color-border)]">
+      <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Range Slider Controller -->
+  <input
+    type="range"
+    min="0"
+    max="100"
+    value="50"
+    class="slider-input absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-10"
+    aria-label="Before after comparison slider"
+  />
+</div>
+
+<style>
+  /* Ensure the processed image container stays aligned correctly */
+  .processed-container img {
+    /* Keep width matching the parent slider container */
+    max-width: none;
+  }
+</style>
+
+<script>
+  function initSliders() {
+    const sliders = document.querySelectorAll('.before-after-slider');
+    sliders.forEach(slider => {
+      const rangeInput = slider.querySelector('.slider-input') as HTMLInputElement;
+      const processedContainer = slider.querySelector('.processed-container') as HTMLElement;
+      const divider = slider.querySelector('.slider-divider') as HTMLElement;
+      const processedImg = processedContainer.querySelector('img') as HTMLElement;
+
+      function updateSlider(val: string) {
+        processedContainer.style.width = `${val}%`;
+        divider.style.left = `${val}%`;
+      }
+
+      if (rangeInput && processedContainer && divider) {
+        rangeInput.addEventListener('input', (e) => {
+          const val = (e.target as HTMLInputElement).value;
+          updateSlider(val);
+        });
+
+        // Set dimensions to inner image when container changes sizes
+        const resizeObserver = new ResizeObserver(entries => {
+          for (let entry of entries) {
+            const width = entry.contentRect.width;
+            const height = entry.contentRect.height;
+            if (processedImg) {
+              processedImg.style.width = `${width}px`;
+              processedImg.style.height = `${height}px`;
+            }
+          }
+        });
+        resizeObserver.observe(slider);
+        
+        // Initial setup
+        updateSlider(rangeInput.value);
+      }
+    });
+  }
+
+  // Run on load
+  initSliders();
+  
+  // Custom hook for dynamically added elements (if any)
+  document.addEventListener('astro:page-load', initSliders);
+</script>

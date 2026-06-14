@@ -1,0 +1,1222 @@
+---
+import ExamSearch from './ExamSearch.astro';
+import ImageDropzone from './ImageDropzone.astro';
+import ProgressBar from './ProgressBar.astro';
+import BeforeAfterSlider from './BeforeAfterSlider.astro';
+
+interface Props {
+  preselectedExamId?: string;
+}
+
+const { preselectedExamId = "" } = Astro.props;
+---
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start" id="resizer-tool-root" data-preselected={preselectedExamId}>
+  <!-- Left Side: Config & Options (5 cols) -->
+  <div class="lg:col-span-5 space-y-6">
+    <!-- Preset Selection Card -->
+    <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-4">
+      <div class="flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] text-[12px] font-bold flex items-center justify-center">1</span>
+        <h2 class="text-[16px] font-bold text-[var(--color-text-primary)]">Exam or Size Settings</h2>
+      </div>
+      
+      <!-- Preset dropdown selection -->
+      <ExamSearch />
+
+      <!-- Doc Type Toggle (only visible if preset is selected) -->
+      <div id="doc-type-container" class="hidden space-y-2 pt-2 border-t border-[var(--color-border-subtle)]">
+        <span class="block text-[13px] font-medium text-[var(--color-text-secondary)]">Document Type</span>
+        <div class="grid grid-cols-2 gap-2 bg-[var(--color-bg-input)] p-1 rounded-[6px] border border-[var(--color-border)]">
+          <button type="button" id="btn-doc-photo" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all">
+            Photograph
+          </button>
+          <button type="button" id="btn-doc-sig" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all">
+            Signature
+          </button>
+        </div>
+      </div>
+
+      <!-- Config Preview (Interactive Form) -->
+      <div class="space-y-4 pt-3 border-t border-[var(--color-border-subtle)]">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="input-width" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Width (px)</label>
+            <input type="number" id="input-width" value="350" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+          </div>
+          <div>
+            <label for="input-height" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Height (px)</label>
+            <input type="number" id="input-height" value="450" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="input-minkb" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Min KB</label>
+            <input type="number" id="input-minkb" value="20" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+          </div>
+          <div>
+            <label for="input-maxkb" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Max KB</label>
+            <input type="number" id="input-maxkb" value="50" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="select-format" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Format</label>
+            <select id="select-format" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none">
+              <option value="jpg">JPG / JPEG</option>
+              <option value="png">PNG</option>
+              <option value="webp">WEBP</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <span class="text-[12px] text-[var(--color-text-muted)] pb-2" id="current-preset-label">Custom size selected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official Requirements Info Card (hidden unless preset selected) -->
+    <div id="requirements-card" class="hidden border border-[var(--color-warning)]/30 bg-[var(--color-bg-card)] rounded-[8px] p-5 space-y-3">
+      <div class="flex items-center gap-2 text-[var(--color-warning)] font-semibold text-[14px]">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <span>Official Portal Requirements</span>
+      </div>
+      <p id="requirements-notes" class="text-[13px] text-[var(--color-text-secondary)] leading-relaxed"></p>
+    </div>
+
+    <!-- Collapsible Bonus Adjustments -->
+    <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-4">
+      <button type="button" id="toggle-adjustments" class="w-full flex items-center justify-between font-bold text-[14px] text-[var(--color-text-primary)] focus:outline-none">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-[var(--color-accent)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>Advanced Adjustments (Optional)</span>
+        </div>
+        <svg class="w-4 h-4 transform transition-transform" id="adjustments-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      <div id="adjustments-panel" class="space-y-4 pt-3 border-t border-[var(--color-border-subtle)] hidden">
+        <!-- Brightness Slider -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-[12px]">
+            <label for="slider-brightness" class="text-[var(--color-text-secondary)]">Brightness</label>
+            <span id="val-brightness" class="text-[var(--color-text-primary)]">0</span>
+          </div>
+          <input type="range" id="slider-brightness" min="-50" max="50" value="0" class="w-full h-1 bg-[var(--color-border)] rounded-full appearance-none cursor-pointer accent-[var(--color-accent)]" />
+        </div>
+
+        <!-- Contrast Slider -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-[12px]">
+            <label for="slider-contrast" class="text-[var(--color-text-secondary)]">Contrast</label>
+            <span id="val-contrast" class="text-[var(--color-text-primary)]">0</span>
+          </div>
+          <input type="range" id="slider-contrast" min="-50" max="50" value="0" class="w-full h-1 bg-[var(--color-border)] rounded-full appearance-none cursor-pointer accent-[var(--color-accent)]" />
+        </div>
+
+        <!-- White BG Toggle -->
+        <div class="flex items-center justify-between pt-2">
+          <div>
+            <label for="toggle-whitebg" class="block text-[13px] font-semibold text-[var(--color-text-primary)]">Force White Background</label>
+            <span class="block text-[11px] text-[var(--color-text-secondary)]">Replaces transparent/grey with pure white</span>
+          </div>
+          <input type="checkbox" id="toggle-whitebg" class="w-4 h-4 accent-[var(--color-accent)] cursor-pointer" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side: Dropzone, Processing, Slider (7 cols) -->
+  <div class="lg:col-span-7 space-y-6">
+    <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-5 h-5 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] text-[12px] font-bold flex items-center justify-center">2</span>
+          <h2 class="text-[16px] font-bold text-[var(--color-text-primary)]">Upload & Process</h2>
+        </div>
+        <span class="text-[12px] bg-[var(--color-bg-elevated)] border border-[var(--color-border)] px-2 py-0.5 rounded-[4px] text-[var(--color-text-secondary)]" id="upload-status">
+          Waiting for file
+        </span>
+      </div>
+
+      <!-- Dropzone -->
+      <ImageDropzone id="resizer-upload" maxSizeMB={15} />
+
+      <!-- Crop Position Adjustment Panel (shown when file is selected) -->
+      <div id="crop-position-panel" class="hidden space-y-4 border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-[var(--color-accent)] animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+          </svg>
+          <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Adjust Crop Position</h3>
+        </div>
+        <p class="text-[12px] text-[var(--color-text-secondary)] leading-relaxed">
+          Drag the photo up/down (or left/right) inside the frame to center your face or signature perfectly and avoid cutting off your head.
+        </p>
+
+        <div id="crop-preview-wrapper" class="relative w-full bg-[#050505] border border-[var(--color-border)] rounded-[6px] overflow-hidden flex items-center justify-center p-4 min-h-[150px] select-none">
+          <!-- Draggable Crop Box Container -->
+          <div id="crop-preview-container" class="relative overflow-hidden cursor-grab active:cursor-grabbing border border-[var(--color-accent)]/30 rounded-[4px] shadow-lg">
+            <img id="crop-preview-img" class="absolute pointer-events-none max-w-none origin-top-left" alt="Crop position preview" />
+            
+            <!-- Target boundary glow/border -->
+            <div class="absolute inset-0 pointer-events-none border border-[var(--color-accent)] opacity-60"></div>
+            
+            <!-- Grid lines for framing -->
+            <div class="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 opacity-25">
+              <div class="border-b border-r border-dashed border-white"></div>
+              <div class="border-b border-r border-dashed border-white"></div>
+              <div class="border-b border-dashed border-white"></div>
+              <div class="border-b border-r border-dashed border-white"></div>
+              <div class="border-b border-r border-dashed border-white"></div>
+              <div class="border-b border-dashed border-white"></div>
+              <div class="border-r border-dashed border-white"></div>
+              <div class="border-r border-dashed border-white"></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Position Sliders for fine control -->
+        <div class="grid grid-cols-1 gap-3 pt-2 border-t border-[var(--color-border-subtle)]">
+          <div id="slider-vert-container" class="space-y-1.5">
+            <div class="flex justify-between text-[12px]">
+              <span class="text-[var(--color-text-secondary)] font-medium">Vertical Position (Up / Down)</span>
+              <span id="val-crop-vert" class="text-[var(--color-text-primary)] font-semibold">50%</span>
+            </div>
+            <input type="range" id="slider-crop-vert" min="0" max="100" value="50" class="w-full h-1 bg-[var(--color-border)] rounded-full appearance-none cursor-pointer accent-[var(--color-accent)]" />
+          </div>
+
+          <div id="slider-horiz-container" class="space-y-1.5 hidden">
+            <div class="flex justify-between text-[12px]">
+              <span class="text-[var(--color-text-secondary)] font-medium">Horizontal Position (Left / Right)</span>
+              <span id="val-crop-horiz" class="text-[var(--color-text-primary)] font-semibold">50%</span>
+            </div>
+            <input type="range" id="slider-crop-horiz" min="0" max="100" value="50" class="w-full h-1 bg-[var(--color-border)] rounded-full appearance-none cursor-pointer accent-[var(--color-accent)]" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress bar (initially hidden) -->
+      <div id="process-progress-container" class="hidden">
+        <ProgressBar id="resizer-progress" />
+      </div>
+
+      <!-- Comparison Section (Initially hidden) -->
+      <div id="comparison-container" class="hidden space-y-6">
+        <div class="space-y-2">
+          <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Processed Preview</h3>
+          <p class="text-[12px] text-[var(--color-text-secondary)]">Drag the slider horizontally to compare the original and processed images.</p>
+        </div>
+
+        <!-- Live slider -->
+        <div id="comparison-slider-mount"></div>
+
+        <!-- Dimensions confirmation & results details -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[8px] p-4 text-[13px]">
+          <div class="space-y-1">
+            <span class="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider block">Original Image</span>
+            <div class="text-[var(--color-text-primary)] font-medium" id="val-orig-dims">0 x 0 px</div>
+            <div class="text-[var(--color-text-secondary)]" id="val-orig-size">0 KB</div>
+          </div>
+          <div class="space-y-1 border-t sm:border-t-0 sm:border-l border-[var(--color-border-subtle)] pt-3 sm:pt-0 sm:pl-4">
+            <span class="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider block">Processed Output</span>
+            <div class="text-[var(--color-accent)] font-semibold" id="val-proc-dims">0 x 0 px</div>
+            <div class="text-[var(--color-text-secondary)]" id="val-proc-size">0 KB</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Canvas Drawer: Add Name & Date Section -->
+      <div id="text-overlay-panel" class="hidden border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-elevated)] p-4 space-y-4">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h4 class="text-[14px] font-bold text-[var(--color-text-primary)]">Add Name & Date strip</h4>
+            <p class="text-[12px] text-[var(--color-text-secondary)]">Commonly required for UPSC and NEET registrations. Adds a white bottom panel containing credentials.</p>
+          </div>
+          <button type="button" id="btn-close-text-panel" class="text-[12px] font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-error)] border border-[var(--color-border)] hover:border-[var(--color-error)] px-2 py-1 rounded-[4px] bg-[var(--color-bg-card)] transition-colors" aria-label="Remove text overlay">
+            Remove
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="text-name" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Candidate Name</label>
+            <input type="text" id="text-name" placeholder="UPPERCASE LETTERS" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+          </div>
+          <div>
+            <label for="text-date" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Date of Photograph</label>
+            <input type="date" id="text-date" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <label class="flex items-center gap-2 text-[13px] text-[var(--color-text-secondary)] cursor-pointer">
+            <input type="radio" name="text-toggle" value="both" checked class="accent-[var(--color-accent)]" />
+            <span>Include Both</span>
+          </label>
+          <label class="flex items-center gap-2 text-[13px] text-[var(--color-text-secondary)] cursor-pointer">
+            <input type="radio" name="text-toggle" value="name" class="accent-[var(--color-accent)]" />
+            <span>Name Only</span>
+          </label>
+          <label class="flex items-center gap-2 text-[13px] text-[var(--color-text-secondary)] cursor-pointer">
+            <input type="radio" name="text-toggle" value="date" class="accent-[var(--color-accent)]" />
+            <span>Date Only</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-[var(--color-border-subtle)]">
+        <!-- Main trigger -->
+        <button
+          type="button"
+          id="btn-process"
+          class="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold py-2.5 rounded-[6px] transition-colors focus-ring disabled:opacity-40 disabled:cursor-not-allowed hidden"
+        >
+          Process Image
+        </button>
+
+        <!-- Download trigger -->
+        <a
+          href="#"
+          id="btn-download"
+          download="reducephoto-resized.jpg"
+          class="flex-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold py-2.5 rounded-[6px] transition-colors focus-ring text-center hidden"
+        >
+          Download Image
+        </a>
+
+        <!-- Add name and date shortcut -->
+        <button
+          type="button"
+          id="btn-shortcut-text"
+          class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[13px] font-medium py-2 px-4 rounded-[6px] transition-colors hidden"
+        >
+          Add Name & Date
+        </button>
+
+        <!-- Process another -->
+        <button
+          type="button"
+          id="btn-reset"
+          class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[13px] font-medium py-2 px-4 rounded-[6px] transition-colors hidden"
+        >
+          Process Another
+        </button>
+
+        <!-- Share (Copy Link) -->
+        <button
+          type="button"
+          id="btn-share"
+          class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[13px] font-medium py-2 px-4 rounded-[6px] transition-colors hidden"
+        >
+          Share
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { exams } from '../data/exams';
+
+  // State
+  let selectedFile: { file: File; dataUrl: string; width: number; height: number; sizeKB: number } | null = null;
+  let activePreset: any = null;
+  let activeDocType: 'photo' | 'signature' = 'photo';
+  let processedDataUrl: string | null = null;
+  let shiftX = 0.5;
+  let shiftY = 0.5;
+
+  // DOM Elements
+  const root = document.getElementById('resizer-tool-root');
+  if (root) {
+    const preselectedId = root.dataset.preselected;
+
+    // Advanced adjustments
+    const toggleAdjBtn = root.querySelector('#toggle-adjustments') as HTMLButtonElement;
+    const adjPanel = root.querySelector('#adjustments-panel') as HTMLElement;
+    const adjArrow = root.querySelector('#adjustments-arrow') as HTMLElement;
+
+    const bldBrightness = root.querySelector('#slider-brightness') as HTMLInputElement;
+    const valBrightness = root.querySelector('#val-brightness') as HTMLElement;
+    const bldContrast = root.querySelector('#slider-contrast') as HTMLInputElement;
+    const valContrast = root.querySelector('#val-contrast') as HTMLElement;
+    const toggleWhiteBg = root.querySelector('#toggle-whitebg') as HTMLInputElement;
+
+    // Document types
+    const docTypeContainer = root.querySelector('#doc-type-container') as HTMLElement;
+    const btnDocPhoto = root.querySelector('#btn-doc-photo') as HTMLButtonElement;
+    const btnDocSig = root.querySelector('#btn-doc-sig') as HTMLButtonElement;
+
+    // Direct inputs
+    const inputWidth = root.querySelector('#input-width') as HTMLInputElement;
+    const inputHeight = root.querySelector('#input-height') as HTMLInputElement;
+    const inputMinKb = root.querySelector('#input-minkb') as HTMLInputElement;
+    const inputMaxKb = root.querySelector('#input-maxkb') as HTMLInputElement;
+    const selectFormat = root.querySelector('#select-format') as HTMLSelectElement;
+    const presetLabel = root.querySelector('#current-preset-label') as HTMLElement;
+    const requirementsCard = root.querySelector('#requirements-card') as HTMLElement;
+    const requirementsNotes = root.querySelector('#requirements-notes') as HTMLElement;
+
+    // Crop position adjustment DOM elements
+    const cropPositionPanel = root.querySelector('#crop-position-panel') as HTMLElement;
+    const cropPreviewWrapper = root.querySelector('#crop-preview-wrapper') as HTMLElement;
+    const cropPreviewContainer = root.querySelector('#crop-preview-container') as HTMLElement;
+    const cropPreviewImg = root.querySelector('#crop-preview-img') as HTMLImageElement;
+
+    const sliderCropVert = root.querySelector('#slider-crop-vert') as HTMLInputElement;
+    const valCropVert = root.querySelector('#val-crop-vert') as HTMLElement;
+    const sliderCropHoriz = root.querySelector('#slider-crop-horiz') as HTMLInputElement;
+    const valCropHoriz = root.querySelector('#val-crop-horiz') as HTMLElement;
+    
+    const sliderVertContainer = root.querySelector('#slider-vert-container') as HTMLElement;
+    const sliderHorizContainer = root.querySelector('#slider-horiz-container') as HTMLElement;
+
+    // Upload & Process flow
+    const dropzoneArea = root.querySelector('#resizer-upload-area') as HTMLElement;
+    const dropzoneInfo = root.querySelector('#resizer-upload-info') as HTMLElement;
+    const uploadStatus = root.querySelector('#upload-status') as HTMLElement;
+    const progressContainer = root.querySelector('#process-progress-container') as HTMLElement;
+    const comparisonContainer = root.querySelector('#comparison-container') as HTMLElement;
+    const comparisonMount = root.querySelector('#comparison-slider-mount') as HTMLElement;
+
+    // Value outputs
+    const valOrigDims = root.querySelector('#val-orig-dims') as HTMLElement;
+    const valOrigSize = root.querySelector('#val-orig-size') as HTMLElement;
+    const valProcDims = root.querySelector('#val-proc-dims') as HTMLElement;
+    const valProcSize = root.querySelector('#val-proc-size') as HTMLElement;
+
+    // Text Overlay
+    const textOverlayPanel = root.querySelector('#text-overlay-panel') as HTMLElement;
+    const textName = root.querySelector('#text-name') as HTMLInputElement;
+    const textDate = root.querySelector('#text-date') as HTMLInputElement;
+    const textToggles = root.querySelectorAll('input[name="text-toggle"]') as NodeListOf<HTMLInputElement>;
+    
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    if (textDate) textDate.value = today;
+
+    // Action buttons
+    const btnProcess = root.querySelector('#btn-process') as HTMLButtonElement;
+    const btnDownload = root.querySelector('#btn-download') as HTMLAnchorElement;
+    const btnShortcutText = root.querySelector('#btn-shortcut-text') as HTMLButtonElement;
+    const btnReset = root.querySelector('#btn-reset') as HTMLButtonElement;
+    const btnShare = root.querySelector('#btn-share') as HTMLButtonElement;
+
+    // Adjustments panel toggle
+    toggleAdjBtn?.addEventListener('click', () => {
+      const isHidden = adjPanel.classList.contains('hidden');
+      if (isHidden) {
+        adjPanel.classList.remove('hidden');
+        adjArrow.style.transform = 'rotate(180deg)';
+      } else {
+        adjPanel.classList.add('hidden');
+        adjArrow.style.transform = 'rotate(0deg)';
+      }
+    });
+
+    bldBrightness?.addEventListener('input', (e) => {
+      valBrightness.textContent = (e.target as HTMLInputElement).value;
+    });
+    bldContrast?.addEventListener('input', (e) => {
+      valContrast.textContent = (e.target as HTMLInputElement).value;
+    });
+
+    // Handle document type switching
+    function setDocType(type: 'photo' | 'signature') {
+      if (activeDocType === type) return;
+      activeDocType = type;
+      if (type === 'photo') {
+        btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
+        btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+      } else {
+        btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
+        btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
+      }
+
+      // Reset the uploaded file so it goes back to upload (re-upload) mode for the new document type
+      const removeBtnInside = root.querySelector('#resizer-upload-remove-btn') as HTMLButtonElement;
+      if (removeBtnInside) {
+        removeBtnInside.click();
+      }
+
+      applyPresetValues();
+    }
+
+    btnDocPhoto?.addEventListener('click', () => setDocType('photo'));
+    btnDocSig?.addEventListener('click', () => setDocType('signature'));
+
+    // Apply active preset parameters to fields
+    function applyPresetValues() {
+      if (!activePreset) return;
+      const specs = activeDocType === 'photo' ? activePreset.photo : activePreset.signature;
+      
+      inputWidth.value = specs.width.toString();
+      inputHeight.value = specs.height.toString();
+      inputMinKb.value = specs.minKB.toString();
+      inputMaxKb.value = specs.maxKB.toString();
+      selectFormat.value = specs.format;
+
+      presetLabel.textContent = `${activePreset.name} (${activeDocType === 'photo' ? 'Photo' : 'Signature'})`;
+
+      if (specs.notes) {
+        requirementsCard.classList.remove('hidden');
+        requirementsNotes.textContent = specs.notes;
+      } else {
+        requirementsCard.classList.add('hidden');
+      }
+
+      // Update crop preview aspect ratio since dimensions changed
+      if (selectedFile) {
+        updateCropPreview();
+      }
+    }
+
+    // Capture preset selected event
+    root.addEventListener('exam-selected', (e: any) => {
+      const data = e.detail;
+      if (data.id === 'custom') {
+        activePreset = null;
+        docTypeContainer.classList.add('hidden');
+        requirementsCard.classList.add('hidden');
+        presetLabel.textContent = "Custom size selected";
+      } else {
+        activePreset = data;
+        docTypeContainer.classList.remove('hidden');
+        applyPresetValues();
+      }
+    });
+
+    // Capture file selected event
+    root.addEventListener('file-selected', (e: any) => {
+      selectedFile = e.detail;
+      uploadStatus.textContent = "Image uploaded";
+      uploadStatus.className = "text-[12px] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] px-2 py-0.5 rounded-[4px] text-[var(--color-accent)]";
+      
+      btnProcess.classList.remove('hidden');
+
+      // Reset shift percentages
+      shiftX = 0.5;
+      shiftY = 0.5;
+      sliderCropVert.value = "50";
+      valCropVert.textContent = "50%";
+      sliderCropHoriz.value = "50";
+      valCropHoriz.textContent = "50%";
+
+      // Update the preview frame
+      updateCropPreview();
+    });
+
+    root.addEventListener('file-removed', () => {
+      selectedFile = null;
+      uploadStatus.textContent = "Waiting for file";
+      uploadStatus.className = "text-[12px] bg-[var(--color-bg-elevated)] border border-[var(--color-border)] px-2 py-0.5 rounded-[4px] text-[var(--color-text-secondary)]";
+      
+      btnProcess.classList.add('hidden');
+      cropPositionPanel.classList.add('hidden');
+      hideProcessedResults();
+    });
+
+    // Manual dimension change listeners
+    inputWidth?.addEventListener('input', () => {
+      if (selectedFile) updateCropPreview();
+    });
+    inputHeight?.addEventListener('input', () => {
+      if (selectedFile) updateCropPreview();
+    });
+
+    // Update crop preview on window resize
+    window.addEventListener('resize', () => {
+      if (selectedFile) updateCropPreview();
+    });
+
+    // Slider inputs for crop adjustment
+    sliderCropVert?.addEventListener('input', (e) => {
+      shiftY = parseInt((e.target as HTMLInputElement).value) / 100;
+      valCropVert.textContent = `${Math.round(shiftY * 100)}%`;
+      cropPreviewImg.style.top = `${-excessHeight * shiftY}px`;
+      if (processedDataUrl) {
+        processImage(true);
+      }
+    });
+
+    sliderCropHoriz?.addEventListener('input', (e) => {
+      shiftX = parseInt((e.target as HTMLInputElement).value) / 100;
+      valCropHoriz.textContent = `${Math.round(shiftX * 100)}%`;
+      cropPreviewImg.style.left = `${-excessWidth * shiftX}px`;
+      if (processedDataUrl) {
+        processImage(true);
+      }
+    });
+
+    // Dragging events for crop preview image
+    let isDraggingImage = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragStartShiftX = 0;
+    let dragStartShiftY = 0;
+    let excessWidth = 0;
+    let excessHeight = 0;
+
+    cropPreviewContainer?.addEventListener('mousedown', (e) => {
+      if (excessWidth <= 0 && excessHeight <= 0) return;
+      isDraggingImage = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      dragStartShiftX = shiftX;
+      dragStartShiftY = shiftY;
+      cropPreviewContainer.classList.remove('cursor-grab');
+      cropPreviewContainer.classList.add('cursor-grabbing');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDraggingImage) return;
+      
+      const deltaX = e.clientX - dragStartX;
+      const deltaY = e.clientY - dragStartY;
+
+      if (excessWidth > 0) {
+        const newShiftX = dragStartShiftX - (deltaX / excessWidth);
+        shiftX = Math.max(0, Math.min(1, newShiftX));
+        sliderCropHoriz.value = Math.round(shiftX * 100).toString();
+        valCropHoriz.textContent = `${Math.round(shiftX * 100)}%`;
+      }
+
+      if (excessHeight > 0) {
+        const newShiftY = dragStartShiftY - (deltaY / excessHeight);
+        shiftY = Math.max(0, Math.min(1, newShiftY));
+        sliderCropVert.value = Math.round(shiftY * 100).toString();
+        valCropVert.textContent = `${Math.round(shiftY * 100)}%`;
+      }
+
+      cropPreviewImg.style.left = `${-excessWidth * shiftX}px`;
+      cropPreviewImg.style.top = `${-excessHeight * shiftY}px`;
+
+      if (processedDataUrl) {
+        processImage(true);
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDraggingImage) {
+        isDraggingImage = false;
+        cropPreviewContainer.classList.remove('cursor-grabbing');
+        cropPreviewContainer.classList.add('cursor-grab');
+        processImage(true);
+      }
+    });
+
+    // Touch events for mobile compatibility
+    cropPreviewContainer?.addEventListener('touchstart', (e) => {
+      if (excessWidth <= 0 && excessHeight <= 0) return;
+      isDraggingImage = true;
+      dragStartX = e.touches[0].clientX;
+      dragStartY = e.touches[0].clientY;
+      dragStartShiftX = shiftX;
+      dragStartShiftY = shiftY;
+    }, { passive: true });
+
+    cropPreviewContainer?.addEventListener('touchmove', (e) => {
+      if (!isDraggingImage) return;
+      
+      const deltaX = e.touches[0].clientX - dragStartX;
+      const deltaY = e.touches[0].clientY - dragStartY;
+
+      if (excessWidth > 0) {
+        const newShiftX = dragStartShiftX - (deltaX / excessWidth);
+        shiftX = Math.max(0, Math.min(1, newShiftX));
+        sliderCropHoriz.value = Math.round(shiftX * 100).toString();
+        valCropHoriz.textContent = `${Math.round(shiftX * 100)}%`;
+      }
+
+      if (excessHeight > 0) {
+        const newShiftY = dragStartShiftY - (deltaY / excessHeight);
+        shiftY = Math.max(0, Math.min(1, newShiftY));
+        sliderCropVert.value = Math.round(shiftY * 100).toString();
+        valCropVert.textContent = `${Math.round(shiftY * 100)}%`;
+      }
+
+      cropPreviewImg.style.left = `${-excessWidth * shiftX}px`;
+      cropPreviewImg.style.top = `${-excessHeight * shiftY}px`;
+
+      if (processedDataUrl) {
+        processImage(true);
+      }
+    }, { passive: true });
+
+    cropPreviewContainer?.addEventListener('touchend', () => {
+      if (isDraggingImage) {
+        isDraggingImage = false;
+        processImage(true);
+      }
+    });
+
+    // Update crop preview position, boundaries, and image scaling
+    function updateCropPreview() {
+      if (!selectedFile) {
+        cropPositionPanel.classList.add('hidden');
+        return;
+      }
+
+      const isAlreadyVisible = !cropPositionPanel.classList.contains('hidden');
+      cropPositionPanel.classList.remove('hidden');
+
+      const performUpdate = () => {
+        if (!selectedFile) return;
+
+        const targetWidth = parseInt(inputWidth.value) || 350;
+        const targetHeight = parseInt(inputHeight.value) || 450;
+
+        const wrapperWidth = cropPreviewWrapper.clientWidth || 350;
+        const maxWrapperHeight = 260; 
+        const targetAspect = targetWidth / targetHeight;
+        const wrapperAspect = wrapperWidth / maxWrapperHeight;
+
+        let containerWidth, containerHeight;
+        if (targetAspect > wrapperAspect) {
+          containerWidth = wrapperWidth;
+          containerHeight = wrapperWidth / targetAspect;
+        } else {
+          containerHeight = maxWrapperHeight;
+          containerWidth = maxWrapperHeight * targetAspect;
+        }
+
+        cropPreviewContainer.style.width = `${containerWidth}px`;
+        cropPreviewContainer.style.height = `${containerHeight}px`;
+
+        cropPreviewImg.src = selectedFile.dataUrl;
+
+        const scale = Math.max(containerWidth / selectedFile.width, containerHeight / selectedFile.height);
+        const scaledWidth = selectedFile.width * scale;
+        const scaledHeight = selectedFile.height * scale;
+
+        cropPreviewImg.style.width = `${scaledWidth}px`;
+        cropPreviewImg.style.height = `${scaledHeight}px`;
+
+        excessWidth = scaledWidth - containerWidth;
+        excessHeight = scaledHeight - containerHeight;
+
+        // Toggle sliders visibility
+        if (excessWidth > 1) {
+          sliderHorizContainer.classList.remove('hidden');
+        } else {
+          sliderHorizContainer.classList.add('hidden');
+        }
+
+        if (excessHeight > 1) {
+          sliderVertContainer.classList.remove('hidden');
+        } else {
+          sliderVertContainer.classList.add('hidden');
+        }
+
+        // Keep within bounds
+        cropPreviewImg.style.left = `${-excessWidth * shiftX}px`;
+        cropPreviewImg.style.top = `${-excessHeight * shiftY}px`;
+      };
+
+      if (isAlreadyVisible) {
+        performUpdate();
+      } else {
+        // Let layout settle, then calculate dimensions
+        setTimeout(performUpdate, 20);
+      }
+    }
+
+    // Hide processed previews
+    function hideProcessedResults() {
+      comparisonContainer.classList.add('hidden');
+      textOverlayPanel.classList.add('hidden');
+      btnDownload.classList.add('hidden');
+      btnShortcutText.classList.add('hidden');
+      btnReset.classList.add('hidden');
+      btnShare.classList.add('hidden');
+    }
+
+    // Share button copy link logic
+    btnShare?.addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href);
+      const originalText = btnShare.textContent;
+      btnShare.textContent = "Link Copied!";
+      setTimeout(() => {
+        btnShare.textContent = originalText;
+      }, 2000);
+    });
+
+    // Shortcut: open text overlays
+    btnShortcutText?.addEventListener('click', () => {
+      textOverlayPanel.classList.remove('hidden');
+      textOverlayPanel.scrollIntoView({ behavior: 'smooth' });
+      processImage(true);
+    });
+
+    // Close text overlay panel
+    const btnCloseTextPanel = root.querySelector('#btn-close-text-panel') as HTMLButtonElement;
+    btnCloseTextPanel?.addEventListener('click', () => {
+      textOverlayPanel.classList.add('hidden');
+      processImage(true);
+    });
+
+    // Text inputs real-time rendering
+    textName?.addEventListener('input', () => {
+      textName.value = textName.value.toUpperCase();
+      processImage(true);
+    });
+    textDate?.addEventListener('input', () => processImage(true));
+    textToggles?.forEach(radio => {
+      radio.addEventListener('change', () => processImage(true));
+    });
+
+    // Main process action
+    btnProcess?.addEventListener('click', () => {
+      processImage(false);
+    });
+
+    btnReset?.addEventListener('click', () => {
+      // Trigger removal in Dropzone component
+      const removeBtnInside = root.querySelector('#resizer-upload-remove-btn') as HTMLButtonElement;
+      if (removeBtnInside) removeBtnInside.click();
+    });
+
+    // Trigger preselected preset on startup
+    if (preselectedId) {
+      setTimeout(() => {
+        const item = root.querySelector(`.preset-item[data-id="${preselectedId}"]`) as HTMLElement;
+        if (item) item.click();
+      }, 100);
+    }
+
+    // MAIN RESIZING ALGORITHM
+    function processImage(isTextOnlyUpdate = false) {
+      if (!selectedFile) return;
+
+      const targetWidth = parseInt(inputWidth.value);
+      const targetHeight = parseInt(inputHeight.value);
+      const minKB = parseInt(inputMinKb.value);
+      const maxKB = parseInt(inputMaxKb.value);
+      const format = selectFormat.value === 'png' ? 'png' : (selectFormat.value === 'webp' ? 'webp' : 'jpeg');
+
+      if (!targetWidth || !targetHeight) {
+        alert('Please enter valid width and height dimensions.');
+        return;
+      }
+
+      // Show loader
+      if (!isTextOnlyUpdate) {
+        progressContainer.classList.remove('hidden');
+        btnProcess.classList.add('hidden');
+      }
+
+      const img = new Image();
+      img.onload = () => {
+        // Create canvas
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        // Apply white background if toggled
+        if (toggleWhiteBg.checked) {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, targetWidth, targetHeight);
+        }
+
+        // Draw image scaled (Fit with crop or stretching?)
+        // Let's do a cover fit to avoid distortion, or stretch?
+        // Candidates usually want no distortion, so let's preserve aspect ratio and cover the image!
+        // We use shiftX and shiftY (set by the interactive crop box) to position the crop window.
+        const hRatio = targetWidth / img.width;
+        const vRatio = targetHeight / img.height;
+        const ratio = Math.max(hRatio, vRatio);
+        const scaledW = img.width * ratio;
+        const scaledH = img.height * ratio;
+        const centerShift_x = (targetWidth - scaledW) * shiftX;
+        const centerShift_y = (targetHeight - scaledH) * shiftY;
+
+        ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, scaledW, scaledH);
+
+        // Apply background removal to turn grey/off-white background pure white if toggled
+        if (toggleWhiteBg.checked) {
+          const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+          const data = imgData.data;
+          const w = targetWidth;
+          const h = targetHeight;
+          const originalData = new Uint8ClampedArray(data);
+          const visited = new Uint8Array(w * h);
+          const queue: number[] = [];
+
+          // Sample seeds along borders (top, left, right)
+          const seeds: [number, number][] = [];
+          for (let x = 0; x < w * 0.35; x += 4) {
+            seeds.push([x, 0]);
+            seeds.push([w - 1 - x, 0]);
+          }
+          for (let y = 0; y < h * 0.85; y += 4) {
+            seeds.push([0, y]);
+            seeds.push([w - 1, y]);
+          }
+
+          const validSeeds: { x: number; y: number; r: number; g: number; b: number }[] = [];
+          seeds.forEach(([sx, sy]) => {
+            const idx = (sy * w + sx) * 4;
+            const r = originalData[idx];
+            const g = originalData[idx + 1];
+            const b = originalData[idx + 2];
+            const brightness = (r + g + b) / 3;
+            
+            const maxVal = Math.max(r, g, b);
+            const minVal = Math.min(r, g, b);
+            const sat = maxVal === 0 ? 0 : (maxVal - minVal) / maxVal;
+
+            // In Resizer, we can be a bit more flexible with brightness (e.g. brightness > 80)
+            if (brightness > 80 && sat < 0.6) {
+              validSeeds.push({ x: sx, y: sy, r, g, b });
+            }
+          });
+
+          if (validSeeds.length === 0) {
+            const corners = [
+              [0, 0],
+              [w - 1, 0],
+              [0, h - 1],
+              [w - 1, h - 1]
+            ];
+            corners.forEach(([cx, cy]) => {
+              const idx = (cy * w + cx) * 4;
+              validSeeds.push({ x: cx, y: cy, r: originalData[idx], g: originalData[idx+1], b: originalData[idx+2] });
+            });
+          }
+
+          const sensitivity = 35; // Default standard threshold
+          const maxDistSq = sensitivity * sensitivity * 3;
+
+          validSeeds.forEach((seed) => {
+            const key = seed.y * w + seed.x;
+            if (visited[key]) return;
+
+            visited[key] = 1;
+            queue.push(seed.x, seed.y);
+
+            const startR = seed.r;
+            const startG = seed.g;
+            const startB = seed.b;
+
+            let qHead = 0;
+            while (qHead < queue.length) {
+              const x = queue[qHead++];
+              const y = queue[qHead++];
+
+              const idx = (y * w + x) * 4;
+              data[idx] = 255;
+              data[idx + 1] = 255;
+              data[idx + 2] = 255;
+              data[idx + 3] = 255;
+
+              const neighbors = [
+                [x + 1, y],
+                [x - 1, y],
+                [x, y + 1],
+                [x, y - 1]
+              ];
+
+              for (let i = 0; i < neighbors.length; i++) {
+                const nx = neighbors[i][0];
+                const ny = neighbors[i][1];
+
+                if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                  const nkey = ny * w + nx;
+                  if (!visited[nkey]) {
+                    const nIdx = nkey * 4;
+                    const r = originalData[nIdx];
+                    const g = originalData[nIdx + 1];
+                    const b = originalData[nIdx + 2];
+                    const a = originalData[nIdx + 3];
+
+                    if (a < 10) {
+                      visited[nkey] = 1;
+                      queue.push(nx, ny);
+                      continue;
+                    }
+
+                    const dr = r - startR;
+                    const dg = g - startG;
+                    const db = b - startB;
+                    const distSq = dr * dr + dg * dg + db * db;
+
+                    if (distSq <= maxDistSq) {
+                      visited[nkey] = 1;
+                      queue.push(nx, ny);
+                    }
+                  }
+                }
+              }
+            }
+            queue.length = 0;
+          });
+
+          ctx.putImageData(imgData, 0, 0);
+        }
+
+        // Adjust Brightness & Contrast
+        const brightness = parseInt(bldBrightness.value);
+        const contrast = parseInt(bldContrast.value);
+
+        if (brightness !== 0 || contrast !== 0) {
+          const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+          const data = imgData.data;
+          // Contrast factor
+          const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+          for (let i = 0; i < data.length; i += 4) {
+            // R, G, B channels
+            for (let j = 0; j < 3; j++) {
+              let v = data[i + j];
+              // Brightness
+              if (brightness !== 0) {
+                v += brightness;
+              }
+              // Contrast
+              if (contrast !== 0) {
+                v = factor * (v - 128) + 128;
+              }
+              // Clamp
+              data[i + j] = Math.min(255, Math.max(0, v));
+            }
+          }
+          ctx.putImageData(imgData, 0, 0);
+        }
+
+        // Add Name & Date if text overlays are populated
+        const includeName = textName && textName.value.trim().length > 0;
+        const includeDate = textDate && textDate.value.trim().length > 0;
+        
+        let shouldDrawStrip = false;
+        const isPanelActive = textOverlayPanel && !textOverlayPanel.classList.contains('hidden');
+
+        if (isPanelActive) {
+          let selectedToggle = 'both';
+          textToggles.forEach(r => { if (r.checked) selectedToggle = r.value; });
+
+          if (selectedToggle === 'both' && (includeName || includeDate)) shouldDrawStrip = true;
+          if (selectedToggle === 'name' && includeName) shouldDrawStrip = true;
+          if (selectedToggle === 'date' && includeDate) shouldDrawStrip = true;
+        }
+
+        if (shouldDrawStrip) {
+          const stripHeight = Math.round(targetHeight * 0.20); // 20% of image height
+          
+          // Draw white strip
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, targetHeight - stripHeight, targetWidth, stripHeight);
+
+          // Draw outline border for the strip
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(0, targetHeight - stripHeight, targetWidth, stripHeight);
+
+          // Text styling
+          ctx.fillStyle = '#000000';
+          ctx.textAlign = 'center';
+          
+          // Calculate font size
+          const nameFontSize = Math.max(10, Math.round(stripHeight * 0.35));
+          const dateFontSize = Math.max(9, Math.round(stripHeight * 0.30));
+
+          if (selectedToggle === 'both' && includeName && includeDate) {
+            // Draw name at top of strip
+            ctx.font = `bold ${nameFontSize}px Arial`;
+            ctx.fillText(textName.value.toUpperCase(), targetWidth / 2, targetHeight - stripHeight + (stripHeight * 0.4));
+            
+            // Draw date formatted (DD/MM/YYYY)
+            ctx.font = `bold ${dateFontSize}px Arial`;
+            const dateVal = new Date(textDate.value);
+            const formattedDate = isNaN(dateVal.getTime()) 
+              ? textDate.value 
+              : `${String(dateVal.getDate()).padStart(2, '0')}/${String(dateVal.getMonth() + 1).padStart(2, '0')}/${dateVal.getFullYear()}`;
+            ctx.fillText(`DATE OF PHOTO: ${formattedDate}`, targetWidth / 2, targetHeight - stripHeight + (stripHeight * 0.8));
+          } else if (selectedToggle === 'name' && includeName) {
+            // Draw name vertically centered
+            ctx.font = `bold ${nameFontSize}px Arial`;
+            ctx.fillText(textName.value.toUpperCase(), targetWidth / 2, targetHeight - (stripHeight / 2) + (nameFontSize / 3));
+          } else if (selectedToggle === 'date' && includeDate) {
+            // Draw date vertically centered
+            ctx.font = `bold ${nameFontSize}px Arial`;
+            const dateVal = new Date(textDate.value);
+            const formattedDate = isNaN(dateVal.getTime()) 
+              ? textDate.value 
+              : `${String(dateVal.getDate()).padStart(2, '0')}/${String(dateVal.getMonth() + 1).padStart(2, '0')}/${dateVal.getFullYear()}`;
+            ctx.fillText(`DOP: ${formattedDate}`, targetWidth / 2, targetHeight - (stripHeight / 2) + (nameFontSize / 3));
+          }
+        }
+
+        // COMPRESSION BINARY SEARCH LOOP (client side only)
+        // start at quality=0.9, adjust until size is within minKB-maxKB
+        let quality = 0.9;
+        let finalDataUrl = '';
+        let fileSizeKB = 0;
+        let iterations = 0;
+        const maxIterations = 10;
+
+        const mime = `image/${format}`;
+
+        if (format === 'png') {
+          // PNG does not support quality compression parameter
+          finalDataUrl = canvas.toDataURL(mime);
+          fileSizeKB = Math.round((finalDataUrl.length * 0.75) / 1024);
+        } else {
+          let minQuality = 0.01;
+          let maxQuality = 1.0;
+
+          while (iterations < maxIterations) {
+            finalDataUrl = canvas.toDataURL(mime, quality);
+            fileSizeKB = (finalDataUrl.length * 0.75) / 1024;
+
+            if (fileSizeKB > maxKB) {
+              // Too large, decrease quality limit
+              maxQuality = quality;
+              quality = (quality + minQuality) / 2;
+            } else if (fileSizeKB < minKB && quality < 0.95) {
+              // Too small, increase quality limit
+              minQuality = quality;
+              quality = (quality + maxQuality) / 2;
+            } else {
+              // Within limits or max quality reached
+              break;
+            }
+            iterations++;
+          }
+        }
+
+        // Output results
+        processedDataUrl = finalDataUrl;
+        btnDownload.href = finalDataUrl;
+        
+        // Dynamic name for downloading
+        let downloadName = 'reducephoto-resized.' + format;
+        if (activePreset) {
+          downloadName = `${activePreset.id}-${activeDocType}-${targetWidth}x${targetHeight}.${format}`;
+        }
+        btnDownload.download = downloadName;
+
+        // Render Before After comparison slider
+        renderComparisonSlider(selectedFile.dataUrl, finalDataUrl);
+
+        // Update stats
+        valOrigDims.textContent = `${selectedFile.width} x ${selectedFile.height} px`;
+        valOrigSize.textContent = `${selectedFile.sizeKB} KB`;
+        valProcDims.textContent = `${targetWidth} x ${targetHeight} px`;
+        valProcSize.textContent = `${Math.round(fileSizeKB)} KB`;
+
+        // Adjust UI
+        if (!isTextOnlyUpdate) {
+          // Fade progress bar out
+          const fill = root.querySelector('#resizer-progress-fill') as HTMLElement;
+          const label = root.querySelector('#resizer-progress-label') as HTMLElement;
+          const percent = root.querySelector('#resizer-progress-percent') as HTMLElement;
+          
+          if (fill && label && percent) {
+            fill.style.width = '100%';
+            percent.textContent = '100%';
+            label.textContent = 'Image compressed successfully!';
+          }
+
+          setTimeout(() => {
+            progressContainer.classList.add('hidden');
+            comparisonContainer.classList.remove('hidden');
+            
+            // Only show name and date option if editing a photograph
+            if (activeDocType === 'photo') {
+              btnShortcutText.classList.remove('hidden');
+            } else {
+              btnShortcutText.classList.add('hidden');
+              textOverlayPanel.classList.add('hidden');
+            }
+
+            btnDownload.classList.remove('hidden');
+            btnReset.classList.remove('hidden');
+            btnShare.classList.remove('hidden');
+          }, 350);
+        }
+      };
+      img.src = selectedFile.dataUrl;
+    }
+
+    function renderComparisonSlider(origUrl: string, procUrl: string) {
+      // Create slider HTML dynamically to mount
+      comparisonMount.innerHTML = `
+        <div class="before-after-slider relative overflow-hidden border border-[var(--color-border)] rounded-[8px] aspect-[4/3] w-full max-w-lg mx-auto bg-black select-none">
+          <img src="${origUrl}" class="absolute inset-0 w-full h-full object-contain pointer-events-none" alt="Original Image" />
+          <span class="absolute top-3 left-3 text-[11px] font-semibold uppercase tracking-wider bg-black/60 border border-[var(--color-border)] text-[var(--color-text-secondary)] px-2 py-0.5 rounded-[4px]">
+            Original
+          </span>
+
+          <div class="processed-container absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style="width: 50%;">
+            <img src="${procUrl}" class="absolute inset-0 w-full h-full object-contain pointer-events-none max-w-none" style="width: 100%; height: 100%;" alt="Processed Image" />
+            <span class="absolute top-3 right-3 text-[11px] font-semibold uppercase tracking-wider bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] px-2 py-0.5 rounded-[4px]">
+              Processed
+            </span>
+          </div>
+
+          <div class="slider-divider absolute top-0 bottom-0 left-[50%] w-[2px] bg-white pointer-events-none">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center pointer-events-none border border-[var(--color-border)]">
+              <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
+              </svg>
+            </div>
+          </div>
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="50"
+            class="slider-input absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-10"
+            aria-label="Before after comparison slider"
+          />
+        </div>
+      `;
+
+      // Active comparison scripts on newly created element
+      const slider = comparisonMount.querySelector('.before-after-slider') as HTMLElement;
+      const rangeInput = slider.querySelector('.slider-input') as HTMLInputElement;
+      const processedContainer = slider.querySelector('.processed-container') as HTMLElement;
+      const divider = slider.querySelector('.slider-divider') as HTMLElement;
+      const processedImg = processedContainer.querySelector('img') as HTMLElement;
+
+      function updateSlider(val: string) {
+        processedContainer.style.width = `${val}%`;
+        divider.style.left = `${val}%`;
+      }
+
+      rangeInput.addEventListener('input', (e) => {
+        const val = (e.target as HTMLInputElement).value;
+        updateSlider(val);
+      });
+
+      const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          const width = entry.contentRect.width;
+          const height = entry.contentRect.height;
+          if (processedImg) {
+            processedImg.style.width = `${width}px`;
+            processedImg.style.height = `${height}px`;
+          }
+        }
+      });
+      resizeObserver.observe(slider);
+      
+      updateSlider(rangeInput.value);
+    }
+  }
+</script>

@@ -1,0 +1,237 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ImageDropzone from '../components/ImageDropzone.astro';
+---
+
+<Layout
+  title="Image Format Converter - Convert JPG, PNG, WEBP Online | Reduce Photo Size"
+  description="Convert your images to JPG, PNG, or WEBP formats instantly. Adjust quality settings to optimize file size without uploading files."
+>
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-12 py-12 lg:py-16 space-y-8 transition-all duration-150" id="convert-tool-container">
+    <!-- Breadcrumb -->
+    <nav class="text-[13px] text-[var(--color-text-muted)] flex items-center gap-2">
+      <a href="/" class="hover:text-[var(--color-text-secondary)] transition-colors">Home</a>
+      <span>/</span>
+      <span class="text-[var(--color-text-secondary)] font-medium">Format Converter</span>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="border-b border-[var(--color-border-subtle)] pb-6 space-y-2.5 max-w-xl">
+      <h1 class="text-[32px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        Format Converter
+      </h1>
+      <p class="text-[15px] text-[var(--color-text-secondary)]">
+        Convert images instantly inside your browser. Drag and drop any image, pick your output format, adjust the quality compression slider, and download.
+      </p>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Left Controls (4 cols) -->
+      <div class="lg:col-span-4 space-y-6">
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-4">
+          <h2 class="text-[16px] font-bold text-[var(--color-text-primary)]">Conversion Settings</h2>
+
+          <!-- Output Format -->
+          <div class="space-y-2">
+            <label for="select-out-format" class="block text-[13px] font-medium text-[var(--color-text-secondary)]">Convert To</label>
+            <select id="select-out-format" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none">
+              <option value="jpeg">JPG / JPEG</option>
+              <option value="png">PNG</option>
+              <option value="webp">WEBP</option>
+            </select>
+          </div>
+
+          <!-- Quality Slider (Conditional display) -->
+          <div id="quality-slider-container" class="space-y-2">
+            <div class="flex justify-between text-[13px]">
+              <label for="slider-conv-quality" class="text-[var(--color-text-secondary)]">Quality</label>
+              <span id="val-conv-quality" class="text-[var(--color-text-primary)] font-medium">90%</span>
+            </div>
+            <input type="range" id="slider-conv-quality" min="1" max="100" value="90" class="w-full h-1 bg-[var(--color-border)] rounded-full appearance-none cursor-pointer accent-[var(--color-accent)]" />
+            <p class="text-[11px] text-[var(--color-text-muted)]">Lower quality reduces image file size significantly.</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="pt-4 border-t border-[var(--color-border-subtle)] space-y-2">
+            <button
+              type="button"
+              id="btn-convert-action"
+              class="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold py-2.5 rounded-[6px] transition-colors focus-ring hidden"
+            >
+              Convert Image
+            </button>
+            <a
+              href="#"
+              id="btn-convert-download"
+              download="reducephoto-converted.jpg"
+              class="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold py-2.5 rounded-[6px] transition-colors focus-ring text-center block hidden"
+            >
+              Download Converted
+            </a>
+            <button
+              type="button"
+              id="btn-convert-reset"
+              class="w-full border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[13px] font-medium py-2 rounded-[6px] transition-colors hidden"
+            >
+              Convert Another
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Output Panel (8 cols) -->
+      <div class="lg:col-span-8 space-y-6">
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-6 space-y-6">
+          <ImageDropzone id="convert-upload" maxSizeMB={15} />
+
+          <!-- Output Preview & Stats -->
+          <div id="convert-preview-container" class="hidden space-y-6">
+            <div class="space-y-2">
+              <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Converted Preview</h3>
+              <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg)] p-4 max-w-md mx-auto flex items-center justify-center">
+                <img id="convert-preview-img" class="max-h-[350px] rounded-[4px]" alt="Converted output" />
+              </div>
+            </div>
+
+            <!-- Conversion Info stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[8px] p-4 text-[13px]">
+              <div>
+                <span class="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider block">Source Format</span>
+                <div class="text-[var(--color-text-primary)] font-medium" id="val-conv-source-fmt">PNG</div>
+                <div class="text-[var(--color-text-secondary)]" id="val-conv-source-size">0 KB</div>
+              </div>
+              <div class="border-t sm:border-t-0 sm:border-l border-[var(--color-border-subtle)] pt-3 sm:pt-0 sm:pl-4">
+                <span class="text-[11px] text-[var(--color-text-muted)] uppercase tracking-wider block">Converted Target</span>
+                <div class="text-[var(--color-accent)] font-semibold" id="val-conv-target-fmt">WEBP</div>
+                <div class="text-[var(--color-text-secondary)]" id="val-conv-target-size">0 KB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  let uploadedFile: { file: File; dataUrl: string; width: number; height: number; sizeKB: number } | null = null;
+  let convertedDataUrl: string | null = null;
+
+  const container = document.getElementById('convert-tool-container');
+  if (container) {
+    const btnAction = container.querySelector('#btn-convert-action') as HTMLButtonElement;
+    const btnDownload = container.querySelector('#btn-convert-download') as HTMLAnchorElement;
+    const btnReset = container.querySelector('#btn-convert-reset') as HTMLButtonElement;
+
+    const selectFormat = container.querySelector('#select-out-format') as HTMLSelectElement;
+    const qualityContainer = container.querySelector('#quality-slider-container') as HTMLElement;
+    const qualitySlider = container.querySelector('#slider-conv-quality') as HTMLInputElement;
+    const qualityVal = container.querySelector('#val-conv-quality') as HTMLElement;
+
+    const previewContainer = container.querySelector('#convert-preview-container') as HTMLElement;
+    const previewImg = container.querySelector('#convert-preview-img') as HTMLImageElement;
+
+    const valSourceFmt = container.querySelector('#val-conv-source-fmt') as HTMLElement;
+    const valSourceSize = container.querySelector('#val-conv-source-size') as HTMLElement;
+    const valTargetFmt = container.querySelector('#val-conv-target-fmt') as HTMLElement;
+    const valTargetSize = container.querySelector('#val-conv-target-size') as HTMLElement;
+
+    // Monitor format dropdown to show/hide quality slider
+    selectFormat.addEventListener('change', () => {
+      const format = selectFormat.value;
+      if (format === 'png') {
+        qualityContainer.classList.add('hidden');
+      } else {
+        qualityContainer.classList.remove('hidden');
+      }
+      
+      // If file already uploaded, trigger instant reconversion preview
+      if (uploadedFile) {
+        btnAction.classList.remove('hidden');
+        btnDownload.classList.add('hidden');
+      }
+    });
+
+    qualitySlider.addEventListener('input', (e) => {
+      qualityVal.textContent = `${(e.target as HTMLInputElement).value}%`;
+      if (uploadedFile) {
+        btnAction.classList.remove('hidden');
+        btnDownload.classList.add('hidden');
+      }
+    });
+
+    // File selection listeners
+    container.addEventListener('file-selected', (e: any) => {
+      uploadedFile = e.detail;
+      btnAction.classList.remove('hidden');
+    });
+
+    container.addEventListener('file-removed', () => {
+      uploadedFile = null;
+      previewContainer.classList.add('hidden');
+      btnAction.classList.add('hidden');
+      btnDownload.classList.add('hidden');
+      btnReset.classList.add('hidden');
+    });
+
+    // Action execution
+    btnAction.addEventListener('click', () => {
+      if (!uploadedFile) return;
+
+      const format = selectFormat.value; // 'jpeg', 'png', 'webp'
+      const quality = parseInt(qualitySlider.value) / 100;
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Draw image
+        if (format === 'jpeg') {
+          // Fill background white for JPEG conversions to prevent black opacity issues
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, img.width, img.height);
+        }
+        ctx.drawImage(img, 0, 0);
+
+        // Export data
+        const mime = `image/${format}`;
+        const outputUrl = canvas.toDataURL(mime, format === 'png' ? undefined : quality);
+        convertedDataUrl = outputUrl;
+
+        // Visuals update
+        previewImg.src = outputUrl;
+        
+        // Show info stats
+        const kbSize = Math.round((outputUrl.length * 0.75) / 1024);
+        const sourceExt = uploadedFile!.name.split('.').pop()?.toUpperCase() || 'IMG';
+
+        valSourceFmt.textContent = sourceExt;
+        valSourceSize.textContent = `${uploadedFile!.sizeKB} KB`;
+        valTargetFmt.textContent = format.toUpperCase();
+        valTargetSize.textContent = `${kbSize} KB`;
+
+        // Update actions buttons
+        previewContainer.classList.remove('hidden');
+        btnDownload.classList.remove('hidden');
+        btnReset.classList.remove('hidden');
+        btnAction.classList.add('hidden');
+
+        btnDownload.href = outputUrl;
+        btnDownload.download = `reducephoto-converted.${format === 'jpeg' ? 'jpg' : format}`;
+      };
+      img.src = uploadedFile.dataUrl;
+    });
+
+    btnReset.addEventListener('click', () => {
+      // Trigger removal in Dropzone component
+      const removeBtnInside = container.querySelector('#convert-upload-remove-btn') as HTMLButtonElement;
+      if (removeBtnInside) removeBtnInside.click();
+    });
+  }
+</script>

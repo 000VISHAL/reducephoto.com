@@ -1,0 +1,67 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ResizerTool from '../components/ResizerTool.astro';
+---
+
+<Layout
+  title="Official Government Exam Photo & Signature Resizer | Reduce Photo Size"
+  description="Resize and compress your passport photo and signature to exact official size guidelines (px and KB limits) in your browser. 100% private, free."
+>
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-12 py-12 lg:py-16 space-y-8 transition-all duration-150">
+    <!-- Breadcrumb -->
+    <nav class="text-[13px] text-[var(--color-text-muted)] flex items-center gap-2">
+      <a href="/" class="hover:text-[var(--color-text-secondary)] transition-colors">Home</a>
+      <span>/</span>
+      <span class="text-[var(--color-text-secondary)] font-medium">Image Resizer</span>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[var(--color-border-subtle)] pb-6">
+      <div class="space-y-2.5 max-w-xl">
+        <h1 class="text-[32px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+          Image Resizer & Compressor
+        </h1>
+        <p class="text-[15px] text-[var(--color-text-secondary)]">
+          Auto-fill dimensions for 100+ Indian government exams or set custom width/height/KB values. All edits occur locally on your machine.
+        </p>
+      </div>
+
+      <!-- Live badge -->
+      <div class="flex-shrink-0 flex items-center gap-2 bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] px-3 py-1 rounded-[4px] text-[12px] font-medium w-fit">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent)] opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-accent)]"></span>
+        </span>
+        Offline Processing Active
+      </div>
+    </div>
+
+    <!-- Main Resizer Tool Component -->
+    <ResizerTool />
+
+    <!-- Help & FAQ Section -->
+    <div class="border-t border-[var(--color-border-subtle)] pt-16 max-w-3xl space-y-8">
+      <h2 class="text-[20px] font-bold text-[var(--color-text-primary)]">Frequently Asked Questions</h2>
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <h3 class="text-[15px] font-semibold text-[var(--color-text-primary)]">How does the auto-kilobyte (KB) compression work?</h3>
+          <p class="text-[14px] leading-relaxed text-[var(--color-text-secondary)]">
+            Our algorithm runs a high-speed compression loop using the Canvas API in your browser. It automatically adjusts the JPEG quality parameter repeatedly in milliseconds until the exported file size fits perfectly within your exam's minimum and maximum allowed KB thresholds.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-[15px] font-semibold text-[var(--color-text-primary)]">Why does it say "Offline Processing Active"?</h3>
+          <p class="text-[14px] leading-relaxed text-[var(--color-text-secondary)]">
+            Unlike other web utilities, Reduce Photo Size never uploads your photos to a server. All canvas rendering, color replacement, text overlays, and quality compression take place in your browser's memory. You can even disconnect your internet while processing files.
+          </p>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-[15px] font-semibold text-[var(--color-text-primary)]">How do I resize for an exam not listed?</h3>
+          <p class="text(--color-text-secondary) text-[14px] leading-relaxed">
+            Select the "Custom Dimensions" option in the exam preset picker. You can then manually enter your target width (in pixels), height (in pixels), format, and minimum/maximum size limits (in KB).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

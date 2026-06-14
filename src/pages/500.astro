@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="500 - Server Error | Reduce Photo Size"
+  description="An unexpected error occurred. Since Reduce Photo Size operates entirely in your browser, refreshing should resolve this."
+>
+  <div class="max-w-[1200px] mx-auto px-6 py-20 lg:py-32 flex flex-col items-center justify-center text-center space-y-8 min-h-[70vh]">
+    
+    <!-- Neon Circle Badge with 500 -->
+    <div class="relative w-32 h-32 flex items-center justify-center">
+      <div class="absolute inset-0 rounded-full bg-[rgba(255,68,68,0.08)] border border-[rgba(255,68,68,0.15)] animate-pulse"></div>
+      <span class="text-[40px] font-black text-[var(--color-error)] tracking-tight">500</span>
+    </div>
+
+    <!-- Message -->
+    <div class="space-y-3 max-w-md">
+      <h1 class="text-[28px] font-extrabold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        Unexpected Error
+      </h1>
+      <p class="text-[14.5px] text-[var(--color-text-secondary)] leading-relaxed">
+        Something went wrong. Because <strong>Reduce Photo Size</strong> executes all resizing and image calculations in your local browser, reloading the page should fix this immediately.
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row items-center gap-4 pt-4">
+      <button onclick="window.location.reload();" class="bg-[var(--color-error)] hover:opacity-95 text-white text-[14px] font-semibold px-6 py-2.5 rounded-[6px] transition-colors focus-ring cursor-pointer">
+        Reload Page
+      </button>
+      <a href="/" class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[14px] font-medium px-6 py-2.5 rounded-[6px] transition-all">
+        Go to Home
+      </a>
+    </div>
+  </div>
+</Layout>

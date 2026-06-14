@@ -1,0 +1,189 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Contact Us | Reduce Photo Size"
+  description="Have questions or feedback? Contact the Reduce Photo Size team. We are a free, privacy-first local image resizing utility."
+>
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-12 py-12 lg:py-20 space-y-10 transition-all duration-150">
+    <!-- Breadcrumb -->
+    <nav class="text-[13px] text-[var(--color-text-muted)] flex items-center gap-2">
+      <a href="/" class="hover:text-[var(--color-text-secondary)] transition-colors">Home</a>
+      <span>/</span>
+      <span class="text-[var(--color-text-secondary)] font-medium">Contact Us</span>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="border-b border-[var(--color-border-subtle)] pb-6 space-y-3 max-w-xl">
+      <h1 class="text-[36px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        Get in Touch
+      </h1>
+      <p class="text-[15px] text-[var(--color-text-secondary)]">
+        Have questions, encountered a bug, or want to suggest a new exam size preset? Send us a message!
+      </p>
+    </div>
+
+    <!-- Contact Panel Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      <!-- Contact Info Box (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="border border-[var(--color-border)] rounded-[12px] bg-[var(--color-bg-card)] p-6 space-y-6">
+          <h2 class="text-[18px] font-bold text-[var(--color-text-primary)]">Contact Details</h2>
+          
+          <div class="space-y-4">
+            <!-- Email -->
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-accent)] flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-[13px] font-bold text-[var(--color-text-primary)]">Support Email</h4>
+                <p class="text-[13.5px] text-[var(--color-text-secondary)] mt-0.5">
+                  <a href="mailto:support@reducephoto.com" class="hover:text-[var(--color-accent)] transition-colors">support@reducephoto.com</a>
+                </p>
+              </div>
+            </div>
+
+            <!-- GitHub -->
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-accent)] flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-[13px] font-bold text-[var(--color-text-primary)]">Open Source Code</h4>
+                <p class="text-[13.5px] text-[var(--color-text-secondary)] mt-0.5">
+                  Inspect our local processing scripts on our repository.
+                </p>
+                <p class="text-[13.5px] text-[var(--color-accent)] font-semibold mt-1">
+                  <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="hover:underline">View on GitHub &rarr;</a>
+                </p>
+              </div>
+            </div>
+
+            <!-- Security info -->
+            <div class="flex items-start gap-4 pt-4 border-t border-[var(--color-border-subtle)]">
+              <div class="w-10 h-10 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-accent)] flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-[13px] font-bold text-[var(--color-text-primary)]">Privacy Guaranteed</h4>
+                <p class="text-[12.5px] text-[var(--color-text-secondary)] leading-relaxed mt-0.5">
+                  Since we process all images locally on your device, we have zero interest in storing your files. Contacting us will never compromise your uploads.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Box (7 cols) -->
+      <div class="lg:col-span-7">
+        <div class="border border-[var(--color-border)] rounded-[12px] bg-[var(--color-bg-card)] p-6 md:p-8 space-y-6 relative overflow-hidden">
+          
+          <!-- Success State Card (hidden initially) -->
+          <div id="contact-success" class="hidden absolute inset-0 bg-[var(--color-bg-card)] z-10 flex flex-col items-center justify-center text-center p-8 space-y-4 animate-fade-in">
+            <div class="w-16 h-16 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] flex items-center justify-center">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="space-y-2 max-w-sm">
+              <h3 class="text-[20px] font-bold text-[var(--color-text-primary)]">Message Sent!</h3>
+              <p class="text-[13.5px] text-[var(--color-text-secondary)] leading-relaxed">
+                Thank you for contacting us. We will review your message and reply as soon as possible via email.
+              </p>
+            </div>
+            <button type="button" id="btn-success-reset" class="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[13.5px] font-semibold px-5 py-2 rounded-[6px] transition-colors focus-ring">
+              Send Another Message
+            </button>
+          </div>
+
+          <!-- Form Element -->
+          <form id="contact-form" class="space-y-4">
+            <h2 class="text-[18px] font-bold text-[var(--color-text-primary)]">Send a Message</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1.5">
+                <label for="contact-name" class="block text-[12px] text-[var(--color-text-secondary)]">Name</label>
+                <input
+                  type="text"
+                  id="contact-name"
+                  required
+                  placeholder="John Doe"
+                  class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none transition-colors"
+                />
+              </div>
+              <div class="space-y-1.5">
+                <label for="contact-email" class="block text-[12px] text-[var(--color-text-secondary)]">Email Address</label>
+                <input
+                  type="email"
+                  id="contact-email"
+                  required
+                  placeholder="john@example.com"
+                  class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label for="contact-subject" class="block text-[12px] text-[var(--color-text-secondary)]">Subject</label>
+              <input
+                type="text"
+                id="contact-subject"
+                required
+                placeholder="e.g. Preset Request, Bug Report"
+                class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none transition-colors"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label for="contact-message" class="block text-[12px] text-[var(--color-text-secondary)]">Message</label>
+              <textarea
+                id="contact-message"
+                required
+                rows="5"
+                placeholder="Tell us what you need help with..."
+                class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3.5 py-2.5 text-[14px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none transition-colors resize-y"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold py-3 rounded-[6px] transition-colors focus-ring cursor-pointer"
+            >
+              Submit Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const successCard = document.getElementById('contact-success') as HTMLElement;
+  const resetBtn = document.getElementById('btn-success-reset') as HTMLButtonElement;
+
+  if (form && successCard && resetBtn) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Visual transition to success state
+      successCard.classList.remove('hidden');
+      form.reset();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      successCard.classList.add('hidden');
+    });
+  }
+</script>

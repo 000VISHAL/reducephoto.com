@@ -1,0 +1,143 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ResizerTool from '../../components/ResizerTool.astro';
+import { exams } from '../../data/exams';
+
+export async function getStaticPaths() {
+  return exams.map((exam) => ({
+    params: { slug: exam.id },
+    props: { exam },
+  }));
+}
+
+const { exam } = Astro.props;
+
+// Filter related exams (same category, excluding current)
+const relatedExams = exams
+  .filter((e) => e.category === exam.category && e.id !== exam.id)
+  .slice(0, 4);
+---
+
+<Layout
+  title={`${exam.name} Photo & Signature Size Resizer | Reduce Photo Size`}
+  description={`Resize your ${exam.name} photograph and signature to official dimensions (${exam.photo.width}x${exam.photo.height}px, ${exam.photo.minKB}-${exam.photo.maxKB}KB) instantly. 100% private in-browser tool.`}
+>
+  <div class="max-w-[1200px] mx-auto px-6 lg:px-12 py-12 lg:py-16 space-y-10 transition-all duration-150">
+    <!-- Breadcrumb -->
+    <nav class="text-[13px] text-[var(--color-text-muted)] flex items-center gap-2">
+      <a href="/" class="hover:text-[var(--color-text-secondary)] transition-colors">Home</a>
+      <span>/</span>
+      <a href="/exams" class="hover:text-[var(--color-text-secondary)] transition-colors">Exams</a>
+      <span>/</span>
+      <span class="text-[var(--color-text-secondary)] font-medium">{exam.name}</span>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="border-b border-[var(--color-border-subtle)] pb-6 space-y-3">
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] uppercase tracking-wider bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] text-[var(--color-accent)] px-2.5 py-0.5 rounded-[4px]">
+          {exam.category} Preset
+        </span>
+      </div>
+      <h1 class="text-[32px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        {exam.name} Photo & Signature Resizer
+      </h1>
+      <p class="text-[15px] text-[var(--color-text-secondary)] max-w-2xl">
+        Resize and compress your photograph and signature files to match the official {exam.name} recruitment portal requirements. No uploads required.
+      </p>
+    </div>
+
+    <!-- Official Requirements Table -->
+    <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] overflow-hidden">
+      <div class="p-4 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)]">
+        <h2 class="text-[14px] font-bold text-[var(--color-text-primary)]">Official Required Dimensions & Limits</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-[13px]">
+          <thead>
+            <tr class="border-b border-[var(--color-border-subtle)] text-[var(--color-text-muted)]">
+              <th class="p-4 font-semibold uppercase tracking-wider">Document Type</th>
+              <th class="p-4 font-semibold uppercase tracking-wider">Dimensions</th>
+              <th class="p-4 font-semibold uppercase tracking-wider">Allowed KB Range</th>
+              <th class="p-4 font-semibold uppercase tracking-wider">Format</th>
+              <th class="p-4 font-semibold uppercase tracking-wider">Instructions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--color-border-subtle)] text-[var(--color-text-secondary)]">
+            <tr>
+              <td class="p-4 font-semibold text-[var(--color-text-primary)]">Photograph</td>
+              <td class="p-4 font-mono">{exam.photo.width} x {exam.photo.height} px</td>
+              <td class="p-4">{exam.photo.minKB} KB – {exam.photo.maxKB} KB</td>
+              <td class="p-4 uppercase font-mono">{exam.photo.format}</td>
+              <td class="p-4 max-w-xs">{exam.photo.notes || 'Plain white background, facing front.'}</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-semibold text-[var(--color-text-primary)]">Signature</td>
+              <td class="p-4 font-mono">{exam.signature.width} x {exam.signature.height} px</td>
+              <td class="p-4">{exam.signature.minKB} KB – {exam.signature.maxKB} KB</td>
+              <td class="p-4 uppercase font-mono">{exam.signature.format}</td>
+              <td class="p-4 max-w-xs">{exam.signature.notes || 'Black ink signature on a plain white paper.'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Resizer Tool Component (pre-selected to this exam id) -->
+    <div class="space-y-4">
+      <h2 class="text-[18px] font-bold text-[var(--color-text-primary)]">Start Resizing</h2>
+      <ResizerTool preselectedExamId={exam.id} />
+    </div>
+
+    <!-- FAQ & Help Info -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 border-t border-[var(--color-border-subtle)] pt-12">
+      <!-- Exam Specific FAQ (8 cols) -->
+      <div class="lg:col-span-8 space-y-8">
+        <h2 class="text-[20px] font-bold text-[var(--color-text-primary)]">{exam.name} FAQ</h2>
+        <div class="space-y-6">
+          <div class="space-y-1">
+            <h3 class="text-[15px] font-semibold text-[var(--color-text-primary)]">What are the photo dimensions for {exam.name}?</h3>
+            <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed">
+              The official portal requires a photograph of {exam.photo.width} pixels wide by {exam.photo.height} pixels high. The file size must be between {exam.photo.minKB} KB and {exam.photo.maxKB} KB in JPEG/JPG format.
+            </p>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-[15px] font-semibold text-[var(--color-text-primary)]">What happens if my photo size is outside the KB range?</h3>
+            <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed">
+              If your photo is less than {exam.photo.minKB} KB or greater than {exam.photo.maxKB} KB, the {exam.name} portal will display an upload error and reject the file. Our compressor runs a binary search to ensure your file sizes fit these bounds perfectly.
+            </p>
+          </div>
+          {exam.photo.notes && (
+            <div class="space-y-1">
+              <h3 class="text-[15px] font-semibold text-[var(--color-text-primary)]">Are there specific rules about the name or date on the photo?</h3>
+              <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed">
+                Yes, according to {exam.name} guidelines: {exam.photo.notes}. You can use the "Add Name & Date" option below your processed preview to print these credentials onto a white bottom strip before downloading.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <!-- Related Exams (4 cols) -->
+      <div class="lg:col-span-4 space-y-6">
+        <h2 class="text-[16px] font-bold text-[var(--color-text-primary)] uppercase tracking-wider">Other {exam.category} Presets</h2>
+        <div class="flex flex-col gap-3">
+          {relatedExams.map((re) => (
+            <a
+              href={`/exam/${re.id}`}
+              class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-4 hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] transition-all flex flex-col gap-1"
+            >
+              <span class="text-[13px] font-semibold text-[var(--color-text-primary)] leading-tight">{re.name}</span>
+              <span class="text-[11px] text-[var(--color-text-secondary)]">
+                {re.photo.width}x{re.photo.height}px ({re.photo.maxKB}KB max)
+              </span>
+            </a>
+          ))}
+          <a href="/exams" class="text-[13px] text-[var(--color-accent)] hover:underline font-semibold mt-2 block">
+            View all {exams.length} presets &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,145 @@
+---
+const currentPath = Astro.url.pathname;
+---
+<header class="sticky top-0 z-50 h-[60px] bg-[var(--color-bg-nav)] backdrop-blur-md border-b border-[var(--color-border-subtle)]">
+  <div class="max-w-[1200px] h-full mx-auto px-6 lg:px-12 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)] font-bold text-[18px] tracking-tight hover:opacity-90 transition-opacity">
+      <svg class="w-5 h-5 text-[var(--color-accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+      </svg>
+      <span>Reduce Photo Size</span>
+    </a>
+
+    <!-- Desktop Nav Links -->
+    <nav class="hidden md:flex items-center gap-6">
+      <a href="/resizer" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/resizer' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        Resizer
+      </a>
+      <a href="/crop" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/crop' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        Crop
+      </a>
+      <a href="/convert" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/convert' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        Convert
+      </a>
+      <a href="/background-remove" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/background-remove' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        Background Remover
+      </a>
+      <a href="/passport-print" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/passport-print' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        Passport Layout
+      </a>
+      <a href="/exams" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/exams' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        Exams
+      </a>
+      <a href="/about" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/about' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        About
+      </a>
+      <a href="/contact" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/contact' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+        Contact
+      </a>
+    </nav>
+
+    <!-- Desktop CTA & Theme Toggle -->
+    <div class="hidden md:flex items-center gap-3">
+      <!-- Theme Toggle Desktop -->
+      <button
+        id="theme-toggle-desktop"
+        class="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] p-1.5 rounded-[6px] border border-[var(--color-border)] hover:border-[var(--color-border-focus)] bg-[var(--color-bg-card)] transition-colors focus-ring cursor-pointer"
+        aria-label="Toggle theme"
+      >
+        <!-- Sun Icon (shown in dark mode) -->
+        <svg class="w-4 h-4 theme-icon-sun" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+        <!-- Moon Icon (shown in light mode) -->
+        <svg class="w-4 h-4 theme-icon-moon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+      </button>
+
+      <a href="/resizer" class="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold px-4 py-2 rounded-[6px] transition-colors focus-ring">
+        Try Now
+      </a>
+    </div>
+
+    <!-- Mobile Actions (Theme Toggle & Menu Button) -->
+    <div class="flex items-center gap-3 md:hidden">
+      <!-- Theme Toggle Mobile -->
+      <button
+        id="theme-toggle-mobile"
+        class="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] p-1.5 rounded-[6px] border border-[var(--color-border)] hover:border-[var(--color-border-focus)] bg-[var(--color-bg-card)] transition-colors focus-ring cursor-pointer"
+        aria-label="Toggle theme"
+      >
+        <!-- Sun Icon (shown in dark mode) -->
+        <svg class="w-4 h-4 theme-icon-sun" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+        <!-- Moon Icon (shown in light mode) -->
+        <svg class="w-4 h-4 theme-icon-moon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+        </svg>
+      </button>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="p-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors focus-ring" aria-label="Toggle Menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobile-menu" class="hidden md:hidden absolute top-[60px] left-0 w-full bg-[var(--color-bg-card)] border-b border-[var(--color-border)] px-6 py-4 flex flex-col gap-4">
+    <a href="/resizer" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/resizer' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      Resizer
+    </a>
+    <a href="/crop" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/crop' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      Crop
+    </a>
+    <a href="/convert" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/convert' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      Convert
+    </a>
+    <a href="/background-remove" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/background-remove' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      Background Remover
+    </a>
+    <a href="/passport-print" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/passport-print' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      Passport Layout
+    </a>
+    <a href="/exams" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/exams' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      Exams
+    </a>
+    <a href="/about" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/about' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      About
+    </a>
+    <a href="/contact" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/contact' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+      Contact
+    </a>
+    <a href="/resizer" class="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[15px] font-semibold py-2.5 rounded-[6px] text-center transition-colors">
+      Try Now
+    </a>
+  </div>
+</header>
+
+<script>
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+
+  if (mobileMenuBtn && mobileMenu && menuIcon) {
+    mobileMenuBtn.addEventListener('click', () => {
+      const isHidden = mobileMenu.classList.contains('hidden');
+      if (isHidden) {
+        mobileMenu.classList.remove('hidden');
+        menuIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+      } else {
+        mobileMenu.classList.add('hidden');
+        menuIcon.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+      }
+    });
+  }
+</script>

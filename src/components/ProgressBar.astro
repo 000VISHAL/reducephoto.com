@@ -1,0 +1,31 @@
+---
+interface Props {
+  id?: string;
+  initialProgress?: number;
+}
+
+const {
+  id = "progress-bar",
+  initialProgress = 0
+} = Astro.props;
+---
+
+<div class="space-y-2" id={`${id}-wrapper`}>
+  <div class="flex items-center justify-between text-[12px] font-medium text-[var(--color-text-secondary)]">
+    <span id={`${id}-label`}>Processing Image...</span>
+    <span id={`${id}-percent`}>{initialProgress}%</span>
+  </div>
+  
+  <div class="w-full bg-[var(--color-border)] rounded-full h-1 overflow-hidden">
+    <div
+      id={`${id}-fill`}
+      class="bg-[var(--color-accent)] h-full rounded-full transition-all duration-300 ease-out"
+      style={`width: ${initialProgress}%`}
+      role="progressbar"
+      aria-valuenow={initialProgress}
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+    </div>
+  </div>
+</div>

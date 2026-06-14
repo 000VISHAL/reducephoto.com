@@ -1,0 +1,239 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  keywords?: string;
+  canonical?: string;
+  ogImage?: string;
+  isHomepage?: boolean;
+}
+
+const {
+  title,
+  description,
+  keywords = 'image resizer, photo converter, crop image, compress image, indian government exams resizer, reduce photo size, upsc photo resizer, ssc cgl signature resizer',
+  canonical = Astro.url.href,
+  ogImage = '/og-image.png', // Fallback, we'll build pages with actual assets later
+  isHomepage = false,
+} = Astro.props;
+
+// JSON-LD structured data for SEO (only on homepage)
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${Astro.url.origin}/#website`,
+      "url": Astro.url.origin,
+      "name": "Reduce Photo Size",
+      "description": "Resize Any Image for Any Indian Exam — Instantly and Privately"
+    },
+    {
+      "@type": "WebApplication",
+      "@id": `${Astro.url.origin}/#webapplication`,
+      "url": `${Astro.url.origin}/resizer`,
+      "name": "Reduce Photo Size Image Resizer",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
+      "description": "Free privacy-first browser-based image resizer for Indian government exams (UPSC, SSC, IBPS, NEET, JEE, etc.)."
+    }
+  ]
+};
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <link rel="canonical" href={canonical} />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:site_name" content="Reduce Photo Size" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage.startsWith('http') ? ogImage : `${Astro.url.origin}${ogImage}`} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url.href} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImage.startsWith('http') ? ogImage : `${Astro.url.origin}${ogImage}`} />
+
+    <!-- Fonts preconnect and load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Structured Data -->
+    {isHomepage && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1T7SPN3JXR" is:inline></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-1T7SPN3JXR');
+    </script>
+
+    <!-- Inline script to set the theme immediately on page load -->
+    <script is:inline>
+      const getTheme = () => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        return 'dark';
+      };
+      
+      const theme = getTheme();
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    </script>
+  </head>
+  <body class="bg-[var(--color-bg)] text-[var(--color-text-secondary)] min-h-screen flex flex-col antialiased selection:bg-[var(--color-accent-subtle)] selection:text-[var(--color-accent)]">
+    <!-- Navbar -->
+    <Navbar />
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+
+    <!-- Scroll Helper Button -->
+    <button
+      id="scroll-helper"
+      class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-12 h-12 rounded-full bg-[var(--color-bg-card)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] shadow-lg shadow-black/10 dark:shadow-black/40 cursor-pointer transition-all duration-300 ease-out transform hover:scale-110 active:scale-95 opacity-0 translate-y-4 pointer-events-none focus-ring"
+      aria-label="Scroll helper"
+    >
+      <svg id="scroll-helper-icon" class="w-5 h-5 transition-transform duration-300 ease-in-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M19 12l-7 7-7-7" />
+      </svg>
+    </button>
+
+    <script>
+      function setupTheme() {
+        const themeToggles = document.querySelectorAll('[id^="theme-toggle-"]');
+        themeToggles.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const isLight = document.documentElement.classList.contains('light');
+            if (isLight) {
+              document.documentElement.classList.add('dark');
+              document.documentElement.classList.remove('light');
+              localStorage.setItem('theme', 'dark');
+            } else {
+              document.documentElement.classList.add('light');
+              document.documentElement.classList.remove('dark');
+              localStorage.setItem('theme', 'light');
+            }
+          });
+        });
+      }
+
+      function setupScrollHelper() {
+        const btn = document.getElementById('scroll-helper');
+        const icon = document.getElementById('scroll-helper-icon');
+        if (!btn || !icon) return;
+
+        const updateScrollHelper = () => {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          const scrollHeight = document.documentElement.scrollHeight;
+          const clientHeight = document.documentElement.clientHeight;
+
+          const isScrollable = scrollHeight > clientHeight + 100;
+          
+          if (isScrollable) {
+            btn.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            btn.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+            
+            const isPastMidpoint = scrollTop > (scrollHeight - clientHeight) / 2;
+            if (isPastMidpoint) {
+              icon.classList.add('rotate-180');
+              btn.setAttribute('aria-label', 'Scroll to top');
+            } else {
+              icon.classList.remove('rotate-180');
+              btn.setAttribute('aria-label', 'Scroll to bottom');
+            }
+          } else {
+            btn.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            btn.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+          }
+        };
+
+        btn.onclick = () => {
+          const scrollHeight = document.documentElement.scrollHeight;
+          const clientHeight = document.documentElement.clientHeight;
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          const isPastMidpoint = scrollTop > (scrollHeight - clientHeight) / 2;
+
+          if (isPastMidpoint) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            const footer = document.querySelector('footer');
+            if (footer) {
+              footer.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              window.scrollTo({ top: scrollHeight, behavior: 'smooth' });
+            }
+          }
+        };
+
+        const win = window as any;
+        if (win.activeScrollHelperListener) {
+          window.removeEventListener('scroll', win.activeScrollHelperListener);
+          window.removeEventListener('resize', win.activeScrollHelperListener);
+        }
+
+        win.activeScrollHelperListener = updateScrollHelper;
+        window.addEventListener('scroll', updateScrollHelper, { passive: true });
+        window.addEventListener('resize', updateScrollHelper, { passive: true });
+
+        // Run immediately
+        updateScrollHelper();
+        // Also run after layout changes or images load
+        setTimeout(updateScrollHelper, 200);
+        setTimeout(updateScrollHelper, 500);
+      }
+
+      // Initial setup
+      setupTheme();
+      setupScrollHelper();
+
+      // Support View Transitions / Client-side routing page load events
+      document.addEventListener('astro:page-load', () => {
+        setupTheme();
+        setupScrollHelper();
+      });
+    </script>
+  </body>
+</html>

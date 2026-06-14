@@ -1,0 +1,98 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Privacy Policy - Reduce Photo Size"
+  description="Read the privacy policy of Reduce Photo Size. Learn how we guarantee 100% security by executing all image manipulations inside your local browser."
+>
+  <div class="max-w-[720px] mx-auto px-6 py-20 lg:py-28 space-y-10 transition-all duration-150">
+    <!-- Breadcrumb -->
+    <nav class="text-[13px] text-[var(--color-text-muted)] flex items-center gap-2">
+      <a href="/" class="hover:text-[var(--color-text-secondary)] transition-colors">Home</a>
+      <span>/</span>
+      <span class="text-[var(--color-text-secondary)] font-medium">Privacy</span>
+    </nav>
+
+    <!-- Header -->
+    <div class="space-y-4">
+      <h1 class="text-[36px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        Privacy Policy
+      </h1>
+      <p class="text-[14px] text-[var(--color-text-muted)]">
+        Last updated: June 2026 • Version 1.0
+      </p>
+    </div>
+
+    <!-- Core Clause (Aesthetic Highlight Box) -->
+    <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-6 space-y-3">
+      <div class="flex items-center gap-2 text-[var(--color-accent)] font-semibold text-[14px] uppercase tracking-wider">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        Our Zero-Server Guarantee
+      </div>
+      <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed">
+        Reduce Photo Size does not utilize backend servers for handling, editing, or compressing your images. Every tool on this site runs inside your browser using JavaScript and HTML5 Canvas. Your photos never leave your device.
+      </p>
+    </div>
+
+    <!-- Detailed Policy -->
+    <div class="space-y-8 text-[15px] leading-relaxed text-[var(--color-text-secondary)]">
+      <!-- Section 1 -->
+      <section class="space-y-3">
+        <h2 class="text-[18px] font-semibold text-[var(--color-text-primary)]">1. Image Data Processing</h2>
+        <p>
+          When you upload an image (photograph or signature) to Reduce Photo Size:
+        </p>
+        <ul class="list-disc pl-5 space-y-1.5 text-[14px]">
+          <li>The image is loaded into your browser's local RAM.</li>
+          <li>We draw the image on a hidden HTML5 <code>&lt;canvas&gt;</code> element.</li>
+          <li>All operations like cropping, resizing, and color replacement are done client-side.</li>
+          <li>Compression is computed in your browser using standard export algorithms (e.g. <code>canvas.toDataURL()</code>).</li>
+        </ul>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="space-y-3">
+        <h2 class="text-[18px] font-semibold text-[var(--color-text-primary)]">2. Server Infrastructure</h2>
+        <p>
+          Our web server only serves static assets (HTML, CSS, JavaScript files, icons, and fonts). We have no databases, no cloud storage buckets, and no server-side API endpoints for handling files. There is no infrastructure in place to capture, save, or view your uploads.
+        </p>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="space-y-3">
+        <h2 class="text-[18px] font-semibold text-[var(--color-text-primary)]">3. Analytics and Tracking</h2>
+        <p>
+          We believe in minimal tracking. We do not use third-party analytics scripts that profile your behavior or capture personal identifiers. We do not place cookies on your browser. 
+        </p>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="space-y-3">
+        <h2 class="text-[18px] font-semibold text-[var(--color-text-primary)]">4. Local Storage</h2>
+        <p>
+          To improve usability, your preferences (such as the last selected exam or document type) may be stored locally in your browser's <code>localStorage</code>. This data remains on your machine and can be cleared at any time by clearing your browser cache.
+        </p>
+      </section>
+
+      <!-- Section 5 -->
+      <section class="space-y-3">
+        <h2 class="text-[18px] font-semibold text-[var(--color-text-primary)]">5. Third-Party Websites</h2>
+        <p>
+          We provide links to official government exam websites for verification purposes. Once you leave Reduce Photo Size, your activities are governed by the privacy policies of those respective websites. We encourage you to review them.
+        </p>
+      </section>
+
+      <!-- Contact -->
+      <section class="space-y-3 border-t border-[var(--color-border-subtle)] pt-8">
+        <h2 class="text-[18px] font-semibold text-[var(--color-text-primary)]">Contact and Support</h2>
+        <p>
+          Since we do not collect any user identifiers or database records, we have no mailing list or marketing communications. If you have any inquiries regarding this client-side utility, you can inspect our source code on GitHub.
+        </p>
+      </section>
+    </div>
+  </div>
+</Layout>

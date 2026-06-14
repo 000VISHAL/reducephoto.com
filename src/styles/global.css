@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0a0a0a;
+  --color-bg-card: #111111;
+  --color-bg-elevated: #161616;
+  --color-bg-input: #0d0d0d;
+
+  --color-border: #222222;
+  --color-border-subtle: #1a1a1a;
+  --color-border-focus: #444444;
+
+  --color-text-primary: #ededed;
+  --color-text-secondary: #888888;
+  --color-text-muted: #444444;
+  --color-text-inverse: #0a0a0a;
+
+  --color-accent: #00d084;
+  --color-accent-hover: #00b870;
+  --color-accent-subtle: rgba(0, 208, 132, 0.08);
+
+  --color-success: #00d084;
+  --color-warning: #f5a623;
+  --color-error: #ff4444;
+  --color-info: #4da6ff;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+/* Base styles override */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-family: var(--font-sans);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Theme variables and overrides */
+:root {
+  --color-bg-nav: rgba(10, 10, 10, 0.8);
+}
+
+.light {
+  --color-bg: #fafafa;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #f4f4f5;
+  --color-bg-input: #ffffff;
+
+  --color-border: #e4e4e7;
+  --color-border-subtle: #f4f4f5;
+  --color-border-focus: #a1a1aa;
+
+  --color-text-primary: #09090b;
+  --color-text-secondary: #52525b;
+  --color-text-muted: #a1a1aa;
+  --color-text-inverse: #ffffff;
+
+  --color-bg-nav: rgba(250, 250, 250, 0.8);
+}
+
+/* Theme toggle icon visibility rules */
+.theme-icon-sun {
+  display: none;
+}
+.theme-icon-moon {
+  display: block;
+}
+html.dark .theme-icon-sun {
+  display: block;
+}
+html.dark .theme-icon-moon {
+  display: none;
+}
+
+
+/* Custom transitions and scrollbar for sleek look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-focus);
+}
+
+/* Utility focus state according to DESIGN.md */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

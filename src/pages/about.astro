@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="About Reduce Photo Size - Privacy-First Image Resizer"
+  description="Learn about Reduce Photo Size: the 100% private, client-side image resizer for Indian government competitive exams and university applications."
+>
+  <div class="max-w-[720px] mx-auto px-6 py-20 lg:py-28 space-y-12 transition-all duration-150">
+    <!-- Breadcrumb -->
+    <nav class="text-[13px] text-[var(--color-text-muted)] flex items-center gap-2">
+      <a href="/" class="hover:text-[var(--color-text-secondary)] transition-colors">Home</a>
+      <span>/</span>
+      <span class="text-[var(--color-text-secondary)] font-medium">About</span>
+    </nav>
+
+    <!-- H1 & Intro -->
+    <div class="space-y-4">
+      <h1 class="text-[36px] font-bold text-[var(--color-text-primary)] leading-tight tracking-tight">
+        Privacy is not a feature. It is our foundation.
+      </h1>
+      <p class="text-[15px] leading-relaxed text-[var(--color-text-secondary)]">
+        Reduce Photo Size was created to solve a persistent frustration for millions of Indian job aspirants and students: formatting photos and signatures for online application portals.
+      </p>
+    </div>
+
+    <!-- Core Philosophy -->
+    <div class="space-y-6">
+      <h2 class="text-[20px] font-semibold text-[var(--color-text-primary)]">Why Reduce Photo Size?</h2>
+      <div class="space-y-4 text-[15px] leading-relaxed">
+        <p>
+          Most online portals (like UPSC, SSC, IBPS, NTA) have extremely strict, outdated image requirements. They reject files if they differ by even a single pixel or a single kilobyte from the specified limits. 
+        </p>
+        <p>
+          To solve this, candidates often upload their sensitive personal documents (passport photos, signatures, IDs) to random, ad-heavy resizer websites. These websites upload files to their servers, exposing candidates to data mining, privacy violations, and identity theft.
+        </p>
+        <p>
+          Reduce Photo Size was created to build a simple, secure, and privacy-first solution. Your private files—like passport photos and signatures—should never be stored on a remote server just because you need to resize them. By processing every pixel locally, we ensure your identity remains yours.
+        </p>
+      </div>
+    </div>
+
+    <!-- Core Features Section -->
+    <div class="space-y-6 border-t border-[var(--color-border-subtle)] pt-8">
+      <h2 class="text-[20px] font-semibold text-[var(--color-text-primary)]">Core Capabilities</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-2">
+          <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Strict Portal Compliance</h3>
+          <p class="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
+            Easily match requirements for UPSC, SSC, IBPS, NEET, JEE, and other exams with our predefined preset sizes updated for current notification cycles.
+          </p>
+        </div>
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-2">
+          <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Interactive Framing</h3>
+          <p class="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
+            Use our interactive crop positioner to drag your photo up, down, or sideways within the canvas frame so your face or signature is never cut off.
+          </p>
+        </div>
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-2">
+          <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Pure White Backgrounds</h3>
+          <p class="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
+            Ensure your photo complies with regulations by replacing light backgrounds or paper tints with a pure white background in one click.
+          </p>
+        </div>
+        <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-2">
+          <h3 class="text-[14px] font-bold text-[var(--color-text-primary)]">Precise KB File Compressor</h3>
+          <p class="text-[13px] text-[var(--color-text-secondary)] leading-relaxed">
+            Enter your desired minimum and maximum file size (e.g. 20KB to 50KB) and our local optimizer will compress the file to hit that range exactly.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Call to action -->
+    <div class="flex items-center gap-4 border-t border-[var(--color-border-subtle)] pt-8">
+      <a href="/resizer" class="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[14px] font-semibold px-5 py-2.5 rounded-[6px] transition-colors focus-ring">
+        Start Resizing
+      </a>
+      <a href="/" class="border border-[var(--color-border)] hover:border-[var(--color-border-focus)] hover:bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] text-[14px] font-medium px-5 py-2.5 rounded-[6px] transition-all">
+        Go to Home
+      </a>
+    </div>
+  </div>
+</Layout>
