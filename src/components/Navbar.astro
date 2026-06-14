@@ -33,12 +33,6 @@ const currentPath = Astro.url.pathname;
       <a href="/exams" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/exams' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
         Exams
       </a>
-      <a href="/about" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/about' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-        About
-      </a>
-      <a href="/contact" class={`text-[14px] font-medium transition-colors hover:text-[var(--color-text-primary)] ${currentPath === '/contact' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-        Contact
-      </a>
     </nav>
 
     <!-- Desktop CTA & Theme Toggle -->
@@ -112,12 +106,6 @@ const currentPath = Astro.url.pathname;
     </a>
     <a href="/exams" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/exams' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
       Exams
-    </a>
-    <a href="/about" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/about' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-      About
-    </a>
-    <a href="/contact" class={`text-[15px] font-medium py-1 transition-colors ${currentPath === '/contact' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-      Contact
     </a>
     <a href="/resizer" class="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-text-inverse)] text-[15px] font-semibold py-2.5 rounded-[6px] text-center transition-colors">
       Try Now

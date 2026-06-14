@@ -24,6 +24,22 @@ import { exams } from '../data/exams';
     </div>
   </div>
 
+  <!-- Selected Preset Indicator Banner -->
+  <div id="selected-preset-indicator" class="hidden p-3 bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] rounded-[6px] items-center justify-between transition-all">
+    <div class="flex items-center gap-2">
+      <svg class="w-4 h-4 text-[var(--color-accent)]" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <div class="text-[13px]">
+        <span class="text-[var(--color-text-secondary)] font-medium">Selected:</span>
+        <strong id="selected-preset-name" class="text-[var(--color-text-primary)] font-semibold ml-1"></strong>
+      </div>
+    </div>
+    <button type="button" id="btn-clear-preset" class="text-[11px] font-bold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors cursor-pointer bg-transparent border-0 outline-none px-2 py-0.5">
+      Reset to Custom
+    </button>
+  </div>
+
   <!-- Category Tabs -->
   <div class="flex flex-wrap gap-1.5 border-b border-[var(--color-border-subtle)] pb-2 overflow-x-auto">
     <button type="button" data-tab="all" class="category-tab active">
@@ -56,7 +72,7 @@ import { exams } from '../data/exams';
       data-id="custom"
       data-name="Custom Dimensions"
       data-category="custom"
-      class="preset-item flex items-center justify-between p-3.5 cursor-pointer hover:bg-[var(--color-bg-elevated)] transition-colors"
+      class="preset-item selected flex items-center justify-between p-3.5 cursor-pointer hover:bg-[var(--color-bg-elevated)] transition-colors"
     >
       <div>
         <div class="text-[14px] font-medium text-[var(--color-text-primary)]">Custom Dimensions</div>
@@ -126,6 +142,12 @@ import { exams } from '../data/exams';
   .hidden-by-filter {
     display: none !important;
   }
+
+  .preset-item.selected {
+    background-color: var(--color-accent-subtle) !important;
+    border-left: 3px solid var(--color-accent) !important;
+    padding-left: calc(14px - 3px) !important;
+  }
 </style>
 
 <script>
@@ -135,6 +157,9 @@ import { exams } from '../data/exams';
     const searchInput = container.querySelector('#exam-search-input') as HTMLInputElement;
     const tabs = container.querySelectorAll('.category-tab');
     const items = container.querySelectorAll('.preset-item');
+    const selectedPresetIndicator = container.querySelector('#selected-preset-indicator') as HTMLElement;
+    const selectedPresetName = container.querySelector('#selected-preset-name') as HTMLElement;
+    const btnClearPreset = container.querySelector('#btn-clear-preset') as HTMLButtonElement;
 
     let currentCategory = 'all';
     let searchQuery = '';
@@ -178,11 +203,36 @@ import { exams } from '../data/exams';
       });
     });
 
+    // Handle clear/reset preset
+    btnClearPreset?.addEventListener('click', () => {
+      const customItem = container.querySelector('.preset-item[data-id="custom"]') as HTMLElement;
+      if (customItem) {
+        customItem.click();
+      }
+    });
+
     // Handle preset selection
     items.forEach((itemNode) => {
       itemNode.addEventListener('click', () => {
         const item = itemNode as HTMLElement;
         const examId = item.dataset.id;
+        const examName = item.dataset.name;
+        
+        // Update selected class
+        items.forEach((it) => it.classList.remove('selected'));
+        item.classList.add('selected');
+
+        // Update selected preset banner indicator
+        if (selectedPresetIndicator && selectedPresetName) {
+          if (examId === 'custom') {
+            selectedPresetIndicator.classList.add('hidden');
+            selectedPresetIndicator.classList.remove('flex');
+          } else {
+            selectedPresetIndicator.classList.remove('hidden');
+            selectedPresetIndicator.classList.add('flex');
+            selectedPresetName.textContent = examName || '';
+          }
+        }
         
         // Dispatch select event
         const event = new CustomEvent('exam-selected', {
