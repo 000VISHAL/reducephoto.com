@@ -15,31 +15,47 @@ const { preselectedExamId = "" } = Astro.props;
   <!-- Left Side: Config & Options (5 cols) -->
   <div class="lg:col-span-5 space-y-6">
     <!-- Preset Selection Card -->
-    <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-4">
+    <div class="border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] p-5 space-y-5">
       <div class="flex items-center gap-2">
         <span class="w-5 h-5 rounded-full bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.2)] text-[var(--color-accent)] text-[12px] font-bold flex items-center justify-center">1</span>
-        <h2 class="text-[16px] font-bold text-[var(--color-text-primary)]">Exam or Size Settings</h2>
+        <h2 class="text-[16px] font-bold text-[var(--color-text-primary)]">Exam & Size Settings</h2>
+      </div>
+
+      <!-- Mode Selection Tabs -->
+      <div class="grid grid-cols-3 gap-1 bg-[var(--color-bg-elevated)] p-1 rounded-[8px] border border-[var(--color-border)]">
+        <button type="button" id="tab-mode-presets" class="py-2 px-1 text-[11px] sm:text-[13px] font-bold rounded-[6px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all cursor-pointer text-center">
+          Exam Presets
+        </button>
+        <button type="button" id="tab-mode-custom" class="py-2 px-1 text-[11px] sm:text-[13px] font-bold rounded-[6px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all cursor-pointer text-center">
+          Custom Resize
+        </button>
+        <button type="button" id="tab-mode-namedate" class="py-2 px-1 text-[11px] sm:text-[13px] font-bold rounded-[6px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all cursor-pointer text-center">
+          Name & Date Only
+        </button>
       </div>
       
-      <!-- Preset dropdown selection -->
-      <ExamSearch />
+      <!-- 1. Exam Presets Section -->
+      <div id="mode-presets-section" class="space-y-4">
+        <!-- Preset dropdown selection -->
+        <ExamSearch />
 
-      <!-- Doc Type Toggle (only visible if preset is selected) -->
-      <div id="doc-type-container" class="hidden space-y-2 pt-2 border-t border-[var(--color-border-subtle)]">
-        <span class="block text-[13px] font-medium text-[var(--color-text-secondary)]">Document Type</span>
-        <div class="grid grid-cols-2 gap-2 bg-[var(--color-bg-input)] p-1 rounded-[6px] border border-[var(--color-border)]">
-          <button type="button" id="btn-doc-photo" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all">
-            Photograph
-          </button>
-          <button type="button" id="btn-doc-sig" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all">
-            Signature
-          </button>
+        <!-- Doc Type Toggle (only visible if preset is selected) -->
+        <div id="doc-type-container" class="hidden space-y-2 pt-2 border-t border-[var(--color-border-subtle)]">
+          <span class="block text-[13px] font-medium text-[var(--color-text-secondary)]">Document Type</span>
+          <div class="grid grid-cols-2 gap-2 bg-[var(--color-bg-input)] p-1 rounded-[6px] border border-[var(--color-border)]">
+            <button type="button" id="btn-doc-photo" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all">
+              Photograph
+            </button>
+            <button type="button" id="btn-doc-sig" class="py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all">
+              Signature
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Config Preview (Interactive Form) -->
-      <div class="space-y-4 pt-3 border-t border-[var(--color-border-subtle)]">
-        <div class="grid grid-cols-2 gap-3">
+      <!-- Target Dimensions Inputs -->
+      <div id="dimensions-inputs-container" class="space-y-4 pt-3 border-t border-[var(--color-border-subtle)]">
+        <div class="grid grid-cols-2 gap-3" id="input-dimensions-grid">
           <div>
             <label for="input-width" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Width (px)</label>
             <input type="number" id="input-width" value="350" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
@@ -50,7 +66,15 @@ const { preselectedExamId = "" } = Astro.props;
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <!-- Keep Original File Size checkbox -->
+        <div id="original-size-container" class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="checkbox-original-size" class="w-4 h-4 accent-[var(--color-accent)] cursor-pointer" />
+          <label for="checkbox-original-size" class="text-[13px] font-semibold text-[var(--color-text-primary)] cursor-pointer">
+            Keep original file size & quality
+          </label>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3" id="kb-inputs-grid">
           <div>
             <label for="input-minkb" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Min KB</label>
             <input type="number" id="input-minkb" value="20" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
@@ -72,6 +96,45 @@ const { preselectedExamId = "" } = Astro.props;
           </div>
           <div class="flex items-end">
             <span class="text-[12px] text-[var(--color-text-muted)] pb-2" id="current-preset-label">Custom size selected</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name & Date Strip Options (Visible/Toggleable in all modes) -->
+      <div id="left-name-date-toggle-container" class="pt-3 border-t border-[var(--color-border-subtle)] space-y-3">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="checkbox-add-text" class="w-4 h-4 accent-[var(--color-accent)] cursor-pointer" />
+          <label for="checkbox-add-text" class="text-[13px] font-semibold text-[var(--color-text-primary)] cursor-pointer">
+            Add Name & Date strip to photo
+          </label>
+        </div>
+
+        <!-- Name & Date inputs (shown when checkbox is checked or always in namedate mode) -->
+        <div id="left-text-overlay-inputs" class="hidden space-y-3 pl-4 border-l-2 border-[var(--color-border)] transition-all">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="left-text-name" class="block text-[11px] text-[var(--color-text-secondary)] mb-1">Candidate Name</label>
+              <input type="text" id="left-text-name" placeholder="UPPERCASE LETTERS" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+            </div>
+            <div>
+              <label for="left-text-date" class="block text-[11px] text-[var(--color-text-secondary)] mb-1">Date of Photograph</label>
+              <input type="date" id="left-text-date" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 pt-1">
+            <label class="flex items-center gap-1.5 text-[11px] text-[var(--color-text-secondary)] cursor-pointer">
+              <input type="radio" name="left-text-toggle" value="both" checked class="accent-[var(--color-accent)]" />
+              <span>Both</span>
+            </label>
+            <label class="flex items-center gap-1.5 text-[11px] text-[var(--color-text-secondary)] cursor-pointer">
+              <input type="radio" name="left-text-toggle" value="name" class="accent-[var(--color-accent)]" />
+              <span>Name Only</span>
+            </label>
+            <label class="flex items-center gap-1.5 text-[11px] text-[var(--color-text-secondary)] cursor-pointer">
+              <input type="radio" name="left-text-toggle" value="date" class="accent-[var(--color-accent)]" />
+              <span>Date Only</span>
+            </label>
           </div>
         </div>
       </div>
@@ -235,44 +298,7 @@ const { preselectedExamId = "" } = Astro.props;
         </div>
       </div>
 
-      <!-- Live Canvas Drawer: Add Name & Date Section -->
-      <div id="text-overlay-panel" class="hidden border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-elevated)] p-4 space-y-4">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <h4 class="text-[14px] font-bold text-[var(--color-text-primary)]">Add Name & Date strip</h4>
-            <p class="text-[12px] text-[var(--color-text-secondary)]">Commonly required for UPSC and NEET registrations. Adds a white bottom panel containing credentials.</p>
-          </div>
-          <button type="button" id="btn-close-text-panel" class="text-[12px] font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-error)] border border-[var(--color-border)] hover:border-[var(--color-error)] px-2 py-1 rounded-[4px] bg-[var(--color-bg-card)] transition-colors" aria-label="Remove text overlay">
-            Remove
-          </button>
-        </div>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label for="text-name" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Candidate Name</label>
-            <input type="text" id="text-name" placeholder="UPPERCASE LETTERS" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
-          </div>
-          <div>
-            <label for="text-date" class="block text-[12px] text-[var(--color-text-secondary)] mb-1">Date of Photograph</label>
-            <input type="date" id="text-date" class="w-full bg-[var(--color-bg-input)] border border-[var(--color-border)] rounded-[6px] px-3 py-1.5 text-[13px] text-[var(--color-text-primary)] focus:border-[var(--color-border-focus)] outline-none" />
-          </div>
-        </div>
 
-        <div class="flex items-center gap-6">
-          <label class="flex items-center gap-2 text-[13px] text-[var(--color-text-secondary)] cursor-pointer">
-            <input type="radio" name="text-toggle" value="both" checked class="accent-[var(--color-accent)]" />
-            <span>Include Both</span>
-          </label>
-          <label class="flex items-center gap-2 text-[13px] text-[var(--color-text-secondary)] cursor-pointer">
-            <input type="radio" name="text-toggle" value="name" class="accent-[var(--color-accent)]" />
-            <span>Name Only</span>
-          </label>
-          <label class="flex items-center gap-2 text-[13px] text-[var(--color-text-secondary)] cursor-pointer">
-            <input type="radio" name="text-toggle" value="date" class="accent-[var(--color-accent)]" />
-            <span>Date Only</span>
-          </label>
-        </div>
-      </div>
 
       <!-- Action buttons -->
       <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-[var(--color-border-subtle)]">
@@ -336,11 +362,21 @@ const { preselectedExamId = "" } = Astro.props;
   let processedDataUrl: string | null = null;
   let shiftX = 0.5;
   let shiftY = 0.5;
+  let currentMode = 'presets';
 
   // DOM Elements
   const root = document.getElementById('resizer-tool-root');
   if (root) {
     const preselectedId = root.dataset.preselected;
+
+    // Check if '?tool=name-date' is present in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const isNameDateTool = urlParams.get('tool') === 'name-date';
+
+    // Tabs DOM elements
+    const tabPresets = root.querySelector('#tab-mode-presets') as HTMLButtonElement;
+    const tabCustom = root.querySelector('#tab-mode-custom') as HTMLButtonElement;
+    const tabNameDate = root.querySelector('#tab-mode-namedate') as HTMLButtonElement;
 
     // Advanced adjustments
     const toggleAdjBtn = root.querySelector('#toggle-adjustments') as HTMLButtonElement;
@@ -396,11 +432,17 @@ const { preselectedExamId = "" } = Astro.props;
     const valProcDims = root.querySelector('#val-proc-dims') as HTMLElement;
     const valProcSize = root.querySelector('#val-proc-size') as HTMLElement;
 
-    // Text Overlay
-    const textOverlayPanel = root.querySelector('#text-overlay-panel') as HTMLElement;
-    const textName = root.querySelector('#text-name') as HTMLInputElement;
-    const textDate = root.querySelector('#text-date') as HTMLInputElement;
-    const textToggles = root.querySelectorAll('input[name="text-toggle"]') as NodeListOf<HTMLInputElement>;
+    // Text Overlay / Name and Date
+    const checkboxAddText = root.querySelector('#checkbox-add-text') as HTMLInputElement;
+    const leftTextOverlayInputs = root.querySelector('#left-text-overlay-inputs') as HTMLElement;
+    const textName = root.querySelector('#left-text-name') as HTMLInputElement;
+    const textDate = root.querySelector('#left-text-date') as HTMLInputElement;
+    const textToggles = root.querySelectorAll('input[name="left-text-toggle"]') as NodeListOf<HTMLInputElement>;
+
+    // Original File Size
+    const checkboxOriginalSize = root.querySelector('#checkbox-original-size') as HTMLInputElement;
+    const kbInputsGrid = root.querySelector('#kb-inputs-grid') as HTMLElement;
+    const originalSizeContainer = root.querySelector('#original-size-container') as HTMLElement;
     
     // Set default date to today
     const today = new Date().toISOString().split('T')[0];
@@ -485,7 +527,12 @@ const { preselectedExamId = "" } = Astro.props;
     // Capture preset selected event
     root.addEventListener('exam-selected', (e: any) => {
       const data = e.detail;
-      if (data.id === 'custom') {
+      if (!data) {
+        activePreset = null;
+        docTypeContainer.classList.add('hidden');
+        requirementsCard.classList.add('hidden');
+        presetLabel.textContent = "No preset selected";
+      } else if (data.id === 'custom') {
         activePreset = null;
         docTypeContainer.classList.add('hidden');
         requirementsCard.classList.add('hidden');
@@ -515,6 +562,14 @@ const { preselectedExamId = "" } = Astro.props;
 
       // Update the preview frame
       updateCropPreview();
+
+      if (currentMode === 'namedate' || isNameDateTool) {
+        if (textName) {
+          setTimeout(() => {
+            textName.focus();
+          }, 150);
+        }
+      }
     });
 
     root.addEventListener('file-removed', () => {
@@ -735,7 +790,6 @@ const { preselectedExamId = "" } = Astro.props;
     // Hide processed previews
     function hideProcessedResults() {
       comparisonContainer.classList.add('hidden');
-      textOverlayPanel.classList.add('hidden');
       btnDownload.classList.add('hidden');
       btnShortcutText.classList.add('hidden');
       btnReset.classList.add('hidden');
@@ -754,15 +808,22 @@ const { preselectedExamId = "" } = Astro.props;
 
     // Shortcut: open text overlays
     btnShortcutText?.addEventListener('click', () => {
-      textOverlayPanel.classList.remove('hidden');
-      textOverlayPanel.scrollIntoView({ behavior: 'smooth' });
-      processImage(true);
+      if (checkboxAddText) {
+        checkboxAddText.checked = true;
+        leftTextOverlayInputs.classList.remove('hidden');
+        leftTextOverlayInputs.scrollIntoView({ behavior: 'smooth' });
+        textName.focus();
+        processImage(true);
+      }
     });
 
-    // Close text overlay panel
-    const btnCloseTextPanel = root.querySelector('#btn-close-text-panel') as HTMLButtonElement;
-    btnCloseTextPanel?.addEventListener('click', () => {
-      textOverlayPanel.classList.add('hidden');
+    // Checkbox add-text toggle listener
+    checkboxAddText?.addEventListener('change', () => {
+      if (checkboxAddText.checked) {
+        leftTextOverlayInputs.classList.remove('hidden');
+      } else {
+        leftTextOverlayInputs.classList.add('hidden');
+      }
       processImage(true);
     });
 
@@ -776,6 +837,134 @@ const { preselectedExamId = "" } = Astro.props;
       radio.addEventListener('change', () => processImage(true));
     });
 
+    // Mode Switching Logic
+    function setMode(mode: string) {
+      currentMode = mode;
+      
+      // Update Tab button classes
+      const tabs = {
+        presets: tabPresets,
+        custom: tabCustom,
+        namedate: tabNameDate
+      };
+      
+      Object.keys(tabs).forEach(k => {
+        const btn = (tabs as any)[k];
+        if (!btn) return;
+        if (k === mode) {
+          btn.className = "py-2 px-1 text-[11px] sm:text-[13px] font-bold rounded-[6px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] shadow-xs transition-all cursor-pointer text-center";
+        } else {
+          btn.className = "py-2 px-1 text-[11px] sm:text-[13px] font-medium rounded-[6px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all cursor-pointer text-center";
+        }
+      });
+      
+      // Show/Hide sections
+      const presetsSection = root.querySelector('#mode-presets-section') as HTMLElement;
+      const dimensionsGrid = root.querySelector('#input-dimensions-grid') as HTMLElement;
+      const dimensionsContainer = root.querySelector('#dimensions-inputs-container') as HTMLElement;
+      const leftNameDateToggleContainer = root.querySelector('#left-name-date-toggle-container') as HTMLElement;
+      const currentPresetLabel = root.querySelector('#current-preset-label') as HTMLElement;
+
+      if (mode === 'presets') {
+        presetsSection?.classList.remove('hidden');
+        dimensionsGrid?.classList.remove('hidden');
+        dimensionsContainer?.classList.remove('hidden');
+        if (leftNameDateToggleContainer) leftNameDateToggleContainer.classList.remove('hidden');
+        
+        if (originalSizeContainer) originalSizeContainer.classList.add('hidden');
+        if (checkboxOriginalSize) checkboxOriginalSize.checked = false;
+        kbInputsGrid?.classList.remove('hidden');
+        
+        if (checkboxAddText) {
+          checkboxAddText.disabled = false;
+          if (checkboxAddText.checked) {
+            leftTextOverlayInputs?.classList.remove('hidden');
+          } else {
+            leftTextOverlayInputs?.classList.add('hidden');
+          }
+        }
+        
+        applyPresetValues();
+      } else if (mode === 'custom') {
+        presetsSection?.classList.add('hidden');
+        dimensionsGrid?.classList.remove('hidden');
+        dimensionsContainer?.classList.remove('hidden');
+        if (leftNameDateToggleContainer) leftNameDateToggleContainer.classList.remove('hidden');
+        if (currentPresetLabel) currentPresetLabel.textContent = "Custom size selected";
+        
+        if (originalSizeContainer) originalSizeContainer.classList.remove('hidden');
+        if (checkboxOriginalSize && checkboxOriginalSize.checked) {
+          kbInputsGrid?.classList.add('hidden');
+        } else {
+          kbInputsGrid?.classList.remove('hidden');
+        }
+        
+        if (checkboxAddText) {
+          checkboxAddText.disabled = false;
+          if (checkboxAddText.checked) {
+            leftTextOverlayInputs?.classList.remove('hidden');
+          } else {
+            leftTextOverlayInputs?.classList.add('hidden');
+          }
+        }
+        
+        if (selectedFile) updateCropPreview();
+      } else if (mode === 'namedate') {
+        presetsSection?.classList.add('hidden');
+        dimensionsGrid?.classList.add('hidden');
+        dimensionsContainer?.classList.remove('hidden');
+        if (currentPresetLabel) currentPresetLabel.textContent = "Original size preserved";
+        
+        if (originalSizeContainer) originalSizeContainer.classList.remove('hidden');
+        if (checkboxOriginalSize) checkboxOriginalSize.checked = true;
+        kbInputsGrid?.classList.add('hidden');
+        
+        if (checkboxAddText) {
+          checkboxAddText.checked = true;
+          checkboxAddText.disabled = true;
+        }
+        leftTextOverlayInputs?.classList.remove('hidden');
+        
+        if (cropPositionPanel) cropPositionPanel.classList.add('hidden');
+      }
+
+      if (selectedFile) {
+        processImage(true);
+      }
+    }
+
+    tabPresets?.addEventListener('click', () => setMode('presets'));
+    tabCustom?.addEventListener('click', () => setMode('custom'));
+    tabNameDate?.addEventListener('click', () => setMode('namedate'));
+
+    checkboxOriginalSize?.addEventListener('change', () => {
+      if (checkboxOriginalSize.checked) {
+        kbInputsGrid?.classList.add('hidden');
+      } else {
+        kbInputsGrid?.classList.remove('hidden');
+      }
+      if (selectedFile) {
+        processImage(true);
+      }
+    });
+
+    // Mode Initialization
+    if (isNameDateTool) {
+      setMode('namedate');
+    } else if (urlParams.get('tool') === 'custom') {
+      setMode('custom');
+    } else {
+      setMode('presets');
+    }
+
+    // Trigger preselected preset on startup
+    if (preselectedId) {
+      setTimeout(() => {
+        const item = root.querySelector(`.preset-item[data-id="${preselectedId}"]`) as HTMLElement;
+        if (item) item.click();
+      }, 100);
+    }
+
     // Main process action
     btnProcess?.addEventListener('click', () => {
       processImage(false);
@@ -787,20 +976,19 @@ const { preselectedExamId = "" } = Astro.props;
       if (removeBtnInside) removeBtnInside.click();
     });
 
-    // Trigger preselected preset on startup
-    if (preselectedId) {
-      setTimeout(() => {
-        const item = root.querySelector(`.preset-item[data-id="${preselectedId}"]`) as HTMLElement;
-        if (item) item.click();
-      }, 100);
-    }
-
     // MAIN RESIZING ALGORITHM
     function processImage(isTextOnlyUpdate = false) {
       if (!selectedFile) return;
 
-      const targetWidth = parseInt(inputWidth.value);
-      const targetHeight = parseInt(inputHeight.value);
+      let targetWidth = 0;
+      let targetHeight = 0;
+      if (currentMode === 'namedate') {
+        targetWidth = selectedFile.width;
+        targetHeight = selectedFile.height;
+      } else {
+        targetWidth = parseInt(inputWidth.value);
+        targetHeight = parseInt(inputHeight.value);
+      }
       const minKB = parseInt(inputMinKb.value);
       const maxKB = parseInt(inputMaxKb.value);
       const format = selectFormat.value === 'png' ? 'png' : (selectFormat.value === 'webp' ? 'webp' : 'jpeg');
@@ -832,19 +1020,24 @@ const { preselectedExamId = "" } = Astro.props;
           ctx.fillRect(0, 0, targetWidth, targetHeight);
         }
 
-        // Draw image scaled (Fit with crop or stretching?)
-        // Let's do a cover fit to avoid distortion, or stretch?
-        // Candidates usually want no distortion, so let's preserve aspect ratio and cover the image!
-        // We use shiftX and shiftY (set by the interactive crop box) to position the crop window.
-        const hRatio = targetWidth / img.width;
-        const vRatio = targetHeight / img.height;
-        const ratio = Math.max(hRatio, vRatio);
-        const scaledW = img.width * ratio;
-        const scaledH = img.height * ratio;
-        const centerShift_x = (targetWidth - scaledW) * shiftX;
-        const centerShift_y = (targetHeight - scaledH) * shiftY;
+        // Draw image
+        if (currentMode === 'namedate') {
+          ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+        } else {
+          // Draw image scaled (Fit with crop or stretching?)
+          // Let's do a cover fit to avoid distortion, or stretch?
+          // Candidates usually want no distortion, so let's preserve aspect ratio and cover the image!
+          // We use shiftX and shiftY (set by the interactive crop box) to position the crop window.
+          const hRatio = targetWidth / img.width;
+          const vRatio = targetHeight / img.height;
+          const ratio = Math.max(hRatio, vRatio);
+          const scaledW = img.width * ratio;
+          const scaledH = img.height * ratio;
+          const centerShift_x = (targetWidth - scaledW) * shiftX;
+          const centerShift_y = (targetHeight - scaledH) * shiftY;
 
-        ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, scaledW, scaledH);
+          ctx.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, scaledW, scaledH);
+        }
 
         // Apply background removal to turn grey/off-white background pure white if toggled
         if (toggleWhiteBg.checked) {
@@ -1002,10 +1195,10 @@ const { preselectedExamId = "" } = Astro.props;
         const includeDate = textDate && textDate.value.trim().length > 0;
         
         let shouldDrawStrip = false;
-        const isPanelActive = textOverlayPanel && !textOverlayPanel.classList.contains('hidden');
+        let selectedToggle = 'both';
+        const isPanelActive = leftTextOverlayInputs && !leftTextOverlayInputs.classList.contains('hidden');
 
         if (isPanelActive) {
-          let selectedToggle = 'both';
           textToggles.forEach(r => { if (r.checked) selectedToggle = r.value; });
 
           if (selectedToggle === 'both' && (includeName || includeDate)) shouldDrawStrip = true;
@@ -1034,47 +1227,76 @@ const { preselectedExamId = "" } = Astro.props;
           const dateFontSize = Math.max(9, Math.round(stripHeight * 0.30));
 
           if (selectedToggle === 'both' && includeName && includeDate) {
-            // Draw name at top of strip
-            ctx.font = `bold ${nameFontSize}px Arial`;
+            // Draw name at top of strip (scaled to fit)
+            let currentNameFontSize = nameFontSize;
+            ctx.font = `bold ${currentNameFontSize}px Arial`;
+            while (ctx.measureText(textName.value.toUpperCase()).width > targetWidth * 0.9 && currentNameFontSize > 6) {
+              currentNameFontSize -= 0.5;
+              ctx.font = `bold ${currentNameFontSize}px Arial`;
+            }
             ctx.fillText(textName.value.toUpperCase(), targetWidth / 2, targetHeight - stripHeight + (stripHeight * 0.4));
             
-            // Draw date formatted (DD/MM/YYYY)
-            ctx.font = `bold ${dateFontSize}px Arial`;
+            // Draw date formatted (DD/MM/YYYY) (scaled to fit)
+            let currentDateFontSize = dateFontSize;
+            ctx.font = `bold ${currentDateFontSize}px Arial`;
             const dateVal = new Date(textDate.value);
             const formattedDate = isNaN(dateVal.getTime()) 
               ? textDate.value 
               : `${String(dateVal.getDate()).padStart(2, '0')}/${String(dateVal.getMonth() + 1).padStart(2, '0')}/${dateVal.getFullYear()}`;
-            ctx.fillText(`DATE OF PHOTO: ${formattedDate}`, targetWidth / 2, targetHeight - stripHeight + (stripHeight * 0.8));
+            const dateText = `DATE OF PHOTO: ${formattedDate}`;
+            while (ctx.measureText(dateText).width > targetWidth * 0.9 && currentDateFontSize > 6) {
+              currentDateFontSize -= 0.5;
+              ctx.font = `bold ${currentDateFontSize}px Arial`;
+            }
+            ctx.fillText(dateText, targetWidth / 2, targetHeight - stripHeight + (stripHeight * 0.8));
           } else if (selectedToggle === 'name' && includeName) {
-            // Draw name vertically centered
-            ctx.font = `bold ${nameFontSize}px Arial`;
-            ctx.fillText(textName.value.toUpperCase(), targetWidth / 2, targetHeight - (stripHeight / 2) + (nameFontSize / 3));
+            // Draw name vertically centered (scaled to fit)
+            let currentNameFontSize = nameFontSize;
+            ctx.font = `bold ${currentNameFontSize}px Arial`;
+            while (ctx.measureText(textName.value.toUpperCase()).width > targetWidth * 0.9 && currentNameFontSize > 6) {
+              currentNameFontSize -= 0.5;
+              ctx.font = `bold ${currentNameFontSize}px Arial`;
+            }
+            ctx.fillText(textName.value.toUpperCase(), targetWidth / 2, targetHeight - (stripHeight / 2) + (currentNameFontSize / 3));
           } else if (selectedToggle === 'date' && includeDate) {
-            // Draw date vertically centered
-            ctx.font = `bold ${nameFontSize}px Arial`;
+            // Draw date vertically centered (scaled to fit)
+            let currentDateFontSize = nameFontSize;
+            ctx.font = `bold ${currentDateFontSize}px Arial`;
             const dateVal = new Date(textDate.value);
             const formattedDate = isNaN(dateVal.getTime()) 
               ? textDate.value 
               : `${String(dateVal.getDate()).padStart(2, '0')}/${String(dateVal.getMonth() + 1).padStart(2, '0')}/${dateVal.getFullYear()}`;
-            ctx.fillText(`DOP: ${formattedDate}`, targetWidth / 2, targetHeight - (stripHeight / 2) + (nameFontSize / 3));
+            const dateText = `DOP: ${formattedDate}`;
+            while (ctx.measureText(dateText).width > targetWidth * 0.9 && currentDateFontSize > 6) {
+              currentDateFontSize -= 0.5;
+              ctx.font = `bold ${currentDateFontSize}px Arial`;
+            }
+            ctx.fillText(dateText, targetWidth / 2, targetHeight - (stripHeight / 2) + (currentDateFontSize / 3));
           }
         }
 
         // COMPRESSION BINARY SEARCH LOOP (client side only)
-        // start at quality=0.9, adjust until size is within minKB-maxKB
-        let quality = 0.9;
         let finalDataUrl = '';
         let fileSizeKB = 0;
-        let iterations = 0;
-        const maxIterations = 10;
-
         const mime = `image/${format}`;
+        const keepOriginalSize = checkboxOriginalSize && checkboxOriginalSize.checked;
 
-        if (format === 'png') {
+        if (keepOriginalSize) {
+          if (format === 'png') {
+            finalDataUrl = canvas.toDataURL(mime);
+          } else {
+            // Use high quality export (0.95 is extremely high quality for JPEG/WEBP, close to lossless but optimized)
+            finalDataUrl = canvas.toDataURL(mime, 0.95);
+          }
+          fileSizeKB = Math.round((finalDataUrl.length * 0.75) / 1024);
+        } else if (format === 'png') {
           // PNG does not support quality compression parameter
           finalDataUrl = canvas.toDataURL(mime);
           fileSizeKB = Math.round((finalDataUrl.length * 0.75) / 1024);
         } else {
+          let quality = 0.9;
+          let iterations = 0;
+          const maxIterations = 10;
           let minQuality = 0.01;
           let maxQuality = 1.0;
 
@@ -1135,12 +1357,13 @@ const { preselectedExamId = "" } = Astro.props;
             progressContainer.classList.add('hidden');
             comparisonContainer.classList.remove('hidden');
             
-            // Only show name and date option if editing a photograph
-            if (activeDocType === 'photo') {
+            // Only show name and date option if editing a photograph and not in name-date mode
+            if (currentMode === 'namedate') {
+              btnShortcutText.classList.add('hidden');
+            } else if (activeDocType === 'photo') {
               btnShortcutText.classList.remove('hidden');
             } else {
               btnShortcutText.classList.add('hidden');
-              textOverlayPanel.classList.add('hidden');
             }
 
             btnDownload.classList.remove('hidden');

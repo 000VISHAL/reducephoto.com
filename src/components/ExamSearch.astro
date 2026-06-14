@@ -36,7 +36,7 @@ import { exams } from '../data/exams';
       </div>
     </div>
     <button type="button" id="btn-clear-preset" class="text-[11px] font-bold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors cursor-pointer bg-transparent border-0 outline-none px-2 py-0.5">
-      Reset to Custom
+      Clear Selection
     </button>
   </div>
 
@@ -60,28 +60,10 @@ import { exams } from '../data/exams';
     <button type="button" data-tab="judiciary" class="category-tab">
       Judiciary
     </button>
-    <button type="button" data-tab="custom" class="category-tab">
-      Custom Size
-    </button>
   </div>
 
-  <!-- Presets List (Scrollable) -->
+    <!-- Presets List (Scrollable) -->
   <div id="presets-list" class="max-h-[260px] overflow-y-auto border border-[var(--color-border)] rounded-[8px] bg-[var(--color-bg-card)] divide-y divide-[var(--color-border-subtle)]">
-    <!-- Custom option always available at top -->
-    <div
-      data-id="custom"
-      data-name="Custom Dimensions"
-      data-category="custom"
-      class="preset-item selected flex items-center justify-between p-3.5 cursor-pointer hover:bg-[var(--color-bg-elevated)] transition-colors"
-    >
-      <div>
-        <div class="text-[14px] font-medium text-[var(--color-text-primary)]">Custom Dimensions</div>
-        <div class="text-[12px] text-[var(--color-text-secondary)]">Specify your own width, height, and KB limits.</div>
-      </div>
-      <span class="text-[12px] bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] px-2 py-0.5 rounded-[4px] border border-[var(--color-border)]">
-        Custom
-      </span>
-    </div>
 
     {exams.map((exam) => (
       <div
@@ -205,10 +187,15 @@ import { exams } from '../data/exams';
 
     // Handle clear/reset preset
     btnClearPreset?.addEventListener('click', () => {
-      const customItem = container.querySelector('.preset-item[data-id="custom"]') as HTMLElement;
-      if (customItem) {
-        customItem.click();
-      }
+      items.forEach((it) => it.classList.remove('selected'));
+      selectedPresetIndicator.classList.add('hidden');
+      selectedPresetIndicator.classList.remove('flex');
+      
+      const event = new CustomEvent('exam-selected', {
+        detail: null,
+        bubbles: true
+      });
+      container.dispatchEvent(event);
     });
 
     // Handle preset selection
