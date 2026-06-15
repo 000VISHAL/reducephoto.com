@@ -509,6 +509,9 @@ const { preselectedExamId = "" } = Astro.props;
         }
       } else {
         leftNameDateToggleContainer.classList.remove('hidden');
+        if (checkboxAddTextWrapper) {
+          checkboxAddTextWrapper.classList.remove('hidden');
+        }
         if (checkboxAddText) {
           checkboxAddText.disabled = false;
           if (checkboxAddText.checked) {
@@ -527,14 +530,14 @@ const { preselectedExamId = "" } = Astro.props;
       if (type === 'photo') {
         btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
         btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
-        if (currentMode === 'custom' && currentPresetLabel) {
-          currentPresetLabel.textContent = "Custom photo selected";
+        if (currentMode === 'custom' && presetLabel) {
+          presetLabel.textContent = "Custom photo selected";
         }
       } else {
         btnDocSig.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-accent)] bg-[var(--color-accent-subtle)] border border-[rgba(0,208,132,0.15)] transition-all";
         btnDocPhoto.className = "py-1.5 text-[13px] font-medium rounded-[4px] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-transparent transition-all";
-        if (currentMode === 'custom' && currentPresetLabel) {
-          currentPresetLabel.textContent = "Custom signature selected";
+        if (currentMode === 'custom' && presetLabel) {
+          presetLabel.textContent = "Custom signature selected";
         }
       }
 
@@ -553,7 +556,7 @@ const { preselectedExamId = "" } = Astro.props;
 
     // Apply active preset parameters to fields
     function applyPresetValues() {
-      if (!activePreset) return;
+      if (!activePreset || currentMode === 'custom') return;
       const specs = activeDocType === 'photo' ? activePreset.photo : activePreset.signature;
       
       inputWidth.value = specs.width.toString();
@@ -944,6 +947,8 @@ const { preselectedExamId = "" } = Astro.props;
         applyPresetValues();
         updateNameDateVisibility();
       } else if (mode === 'custom') {
+        activePreset = null;
+        requirementsCard?.classList.add('hidden');
         presetsSection?.classList.add('hidden');
         docTypeContainer?.classList.remove('hidden');
         
@@ -969,6 +974,8 @@ const { preselectedExamId = "" } = Astro.props;
         
         if (selectedFile) updateCropPreview();
       } else if (mode === 'namedate') {
+        activePreset = null;
+        requirementsCard?.classList.add('hidden');
         activeDocType = 'photo';
         presetsSection?.classList.add('hidden');
         docTypeContainer?.classList.add('hidden');
